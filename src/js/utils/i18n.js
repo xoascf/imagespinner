@@ -143,7 +143,9 @@ export const i18n = {
     gifLoopApplied: 'Foreground GIF loop length applied.',
     gifLoopMissing: 'Load a foreground GIF first, or wait for the GIF duration to be detected.',
     settingsBalanced: 'Balanced spin settings applied.',
-    settingsReset: 'Settings reset.'
+    settingsReset: 'Settings reset.',
+    removedFile: 'File removed.',
+    removeFile: 'Remove file'
   },
   fi: {
     appTitle: 'Kuvapyöritin',
@@ -286,7 +288,9 @@ export const i18n = {
     gifLoopApplied: 'Etualan GIF-silmukan pituus asetettu.',
     gifLoopMissing: 'Lataa ensin etualan GIF tai odota, että GIFin kesto tunnistetaan.',
     settingsBalanced: 'Tasapainoiset pyöritysasetukset käytössä.',
-    settingsReset: 'Asetukset nollattu.'
+    settingsReset: 'Asetukset nollattu.',
+    removedFile: 'Tiedosto poistettu.',
+    removeFile: 'Poista tiedosto'
   }
 };
 
@@ -315,6 +319,9 @@ export function applyLanguage() {
   $('languageSelect').value = language;
   document.querySelectorAll('[data-i18n]').forEach(el => {
     el.textContent = t(el.dataset.i18n);
+  });
+  document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+    el.setAttribute('aria-label', t(el.dataset.i18nAria));
   });
   const statusKey = $('status').dataset.statusKey || 'ready';
   const params = $('status').dataset.statusParams ? JSON.parse($('status').dataset.statusParams) : null;

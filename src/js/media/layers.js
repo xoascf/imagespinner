@@ -1,6 +1,7 @@
 import { state } from '../state.js';
 import { $, canvas } from '../utils/dom.js';
 import { revokeIfBlobUrl } from '../utils/files.js';
+import { currentMediaFiles } from '../consts.js';
 import { isVideoFileObject, isVideoFilename, isGifFilename, loadStillImageFile, loadVideoFileObject } from './loader.js';
 import { loadGif, loadGifFromUrl } from '../gif-utils.js';
 import { applyAudioDuration } from '../controls/presets.js';
@@ -11,12 +12,16 @@ import { t } from '../utils/i18n.js';
 export function updateFileName(id, file) {
   const nameEl = $(id + 'Name');
   if (!nameEl) return;
+  const picker = nameEl.closest('.file-picker');
+  const removeBtn = picker?.querySelector('.file-remove');
   if (file) {
     nameEl.textContent = file.name;
     nameEl.removeAttribute('data-i18n');
+    if (removeBtn) removeBtn.hidden = false;
   } else {
     nameEl.dataset.i18n = 'noFile';
     nameEl.textContent = t('noFile');
+    if (removeBtn) removeBtn.hidden = true;
   }
 }
 
@@ -242,6 +247,53 @@ export function loadAudioFromUrl(url, displayName) {
   state.audioBassPeak = 0.08;
   updateMeta();
   status('audioLoadedStatus');
+}
+
+export function clearFile(inputId, mediaKey) {
+  currentMediaFiles[mediaKey] = null;
+  updateFileName(inputId, null);
+
+  switch (mediaKey) {
+    case 'rear':
+      state.rearBg = null;
+      state.rearBgType = 'none';
+      revokeIfBlobUrl(state.rearBgUrl);
+      state.rearBgUrl = null;
+      break;
+    case 'bg':
+      state.bg = null;
+      state.bgType = 'none';
+      revokeIfBlobUrl(state.bgUrl);
+      state.bgUrl = null;
+      state.bgGifDuration = 0;
+      state.bgGifFrames = 0;
+      state.bgGifDelays = [];
+      state.bgGifAnimator = null;
+      break;
+    case 'fg':
+      state.fg = null;
+      state.fgType = 'none';
+      revokeIfBlobUrl(state.fgUrl);
+      state.fgUrl = null;
+      state.fgGifDuration = 0;
+      state.fgGifFrames = 0;
+      state.fgGifDelays = [];
+      state.fgGifAnimator = null;
+      break;
+    case 'audio':
+      if (state.audio) state.audio.pause();
+      if (state.audioUrl) URL.revokeObjectURL(state.audioUrl);
+      state.audioUrl = null;
+      state.audio = null;
+      state.audioSource = null;
+      state.audioLevelSmoothed = 0;
+      state.audioBassFloor = 0;
+      state.audioBassPeak = 0.08;
+      break;
+  }
+
+  updateMeta();
+  status('removedFile');
 }
 
 export function playExportMedia() {

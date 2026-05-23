@@ -2,7 +2,7 @@ import { state } from '../state.js';
 import { $, canvas } from '../utils/dom.js';
 import { currentMediaFiles } from '../consts.js';
 import { t, setLanguage, applyLanguage } from '../utils/i18n.js';
-import { updateFileName, loadRearBackground, loadBackground, loadForeground, loadAudioFile } from '../media/layers.js';
+import { updateFileName, loadRearBackground, loadBackground, loadForeground, loadAudioFile, clearFile } from '../media/layers.js';
 import { loadDefaultAssets, loadDefaultAssetsFromFolder } from '../media/defaults.js';
 import { loadQueryAssets } from '../url-loader.js';
 import { applyBalancedSettings, applyAudioDuration, resetSettings, applyForegroundGifLoop } from './presets.js';
@@ -22,37 +22,59 @@ function canvasPoint(e) {
   };
 }
 
+const filePickers = [
+  ['rearBgFile', 'rear', loadRearBackground],
+  ['bgFile', 'bg', loadBackground],
+  ['fgFile', 'fg', loadForeground],
+  ['audioFile', 'audio', loadAudioFile]
+];
+
+function handleFileSelected(inputId, mediaKey, loadFn, file) {
+  if (!file) return;
+  currentMediaFiles[mediaKey] = file;
+  updateFileName(inputId, file);
+  loadFn(file);
+  $(inputId).value = '';
+}
+
+function setupFileDrop(inputId, mediaKey, loadFn) {
+  const input = $(inputId);
+  const picker = input.closest('.file-picker') || input.parentElement;
+
+  picker.addEventListener('dragover', e => {
+    e.preventDefault();
+    picker.classList.add('drag-over');
+  });
+
+  picker.addEventListener('dragleave', () => {
+    picker.classList.remove('drag-over');
+  });
+
+  picker.addEventListener('drop', e => {
+    e.preventDefault();
+    picker.classList.remove('drag-over');
+    handleFileSelected(inputId, mediaKey, loadFn, e.dataTransfer.files[0]);
+  });
+}
+
+function setupFileRemove(inputId, mediaKey) {
+  const picker = $(inputId).closest('.file-picker');
+  const removeBtn = picker?.querySelector('.file-remove');
+  if (!removeBtn) return;
+  removeBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    clearFile(inputId, mediaKey);
+    $(inputId).value = '';
+  });
+}
+
 export function initControls() {
-  $('rearBgFile').addEventListener('change', e => {
-    const file = e.target.files[0];
-    if (file) currentMediaFiles.rear = file;
-    updateFileName('rearBgFile', file);
-    loadRearBackground(file);
-    e.target.value = '';
-  });
-
-  $('bgFile').addEventListener('change', e => {
-    const file = e.target.files[0];
-    if (file) currentMediaFiles.bg = file;
-    updateFileName('bgFile', file);
-    loadBackground(file);
-    e.target.value = '';
-  });
-
-  $('fgFile').addEventListener('change', e => {
-    const file = e.target.files[0];
-    if (file) currentMediaFiles.fg = file;
-    updateFileName('fgFile', file);
-    loadForeground(file);
-    e.target.value = '';
-  });
-
-  $('audioFile').addEventListener('change', e => {
-    const file = e.target.files[0];
-    if (!file) return;
-    if (file) currentMediaFiles.audio = file;
-    loadAudioFile(file);
-    e.target.value = '';
+  filePickers.forEach(([inputId, mediaKey, loadFn]) => {
+    $(inputId).addEventListener('change', e => {
+      handleFileSelected(inputId, mediaKey, loadFn, e.target.files[0]);
+    });
+    setupFileDrop(inputId, mediaKey, loadFn);
+    setupFileRemove(inputId, mediaKey);
   });
 
   $('audioBtn').addEventListener('click', async () => {

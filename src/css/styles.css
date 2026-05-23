@@ -287,7 +287,7 @@ input[type="file"] {
 
 .file-picker {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 10px;
   min-height: 46px;
@@ -302,6 +302,28 @@ input[type="file"] {
 .file-picker:hover {
   border-color: var(--accent);
   background: #f7fbfa;
+}
+
+.file-picker.drag-over {
+  border-color: var(--accent);
+  border-style: solid;
+  background: #e8f5ee;
+}
+
+.file-remove {
+  background: none;
+  border: none;
+  color: #c00;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 6px;
+  border-radius: 4px;
+}
+
+.file-remove:hover {
+  background: #fee;
+  color: #800;
 }
 
 .file-action {
