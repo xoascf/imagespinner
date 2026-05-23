@@ -1,17 +1,30 @@
 import { $, canvas, ctx } from '../utils/dom.js';
 
+let _wmCache = { text: '', size: 0, width: 0 };
+
 export function drawWatermark() {
-  if (!$('watermarkOn') || !$('watermarkOn').checked) return;
-  const text = ($('watermarkText') && $('watermarkText').value.trim()) || 'Trassel Vardias';
-  const size = Math.max(8, Number($('watermarkSize') ? $('watermarkSize').value : 28) || 28);
-  const pos = $('watermarkPosition') ? $('watermarkPosition').value : 'bottom-right';
+  const wmOnEl = $('watermarkOn');
+  if (!wmOnEl || !wmOnEl.checked) return;
+  const wmTextEl = $('watermarkText');
+  const text = (wmTextEl && wmTextEl.value.trim()) || 'Trassel Vardias';
+  const wmSizeEl = $('watermarkSize');
+  const size = Math.max(8, Number(wmSizeEl ? wmSizeEl.value : 28) || 28);
+  const wmPosEl = $('watermarkPosition');
+  const pos = wmPosEl ? wmPosEl.value : 'bottom-right';
   const pad = Math.max(8, Math.round(size * 0.65));
+  const font = '700 ' + size + 'px Arial, sans-serif';
 
   ctx.save();
-  ctx.font = '700 ' + size + 'px Arial, sans-serif';
+  ctx.font = font;
   ctx.textBaseline = 'alphabetic';
-  const metrics = ctx.measureText(text);
-  const width = metrics.width;
+
+  // Cache measureText — only recompute when text or size changes
+  if (_wmCache.text !== text || _wmCache.size !== size) {
+    _wmCache.text = text;
+    _wmCache.size = size;
+    _wmCache.width = ctx.measureText(text).width;
+  }
+
   const height = size;
   let x = canvas.width - pad;
   let y = canvas.height - pad;

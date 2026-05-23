@@ -28,11 +28,17 @@ export async function prepareAudioForPlayback() {
   return graph;
 }
 
+let _frameCount = 0;
+const _domUpdateInterval = 6;
+
 export function currentAudioLevel() {
   if (!state.audioAnalyser || !state.audioData || !state.audio || state.audio.paused) {
     state.audioLevelSmoothed *= 0.82;
     state.lastBassDisplayLevel = state.audioLevelSmoothed;
-    if ($('bassLevelText')) $('bassLevelText').textContent = Math.round(state.lastBassDisplayLevel * 100);
+    _frameCount = (_frameCount + 1) % _domUpdateInterval;
+    if (_frameCount === 0 && $('bassLevelText')) {
+      $('bassLevelText').textContent = Math.round(state.lastBassDisplayLevel * 100);
+    }
     return state.audioLevelSmoothed;
   }
 
@@ -63,7 +69,11 @@ export function currentAudioLevel() {
 
   state.audioLevelSmoothed = state.audioLevelSmoothed * 0.25 + level * 0.75;
   state.lastBassDisplayLevel = state.audioLevelSmoothed;
-  if ($('bassLevelText')) $('bassLevelText').textContent = Math.round(state.lastBassDisplayLevel * 100) + '  (25-180 Hz)';
+
+  _frameCount = (_frameCount + 1) % _domUpdateInterval;
+  if (_frameCount === 0 && $('bassLevelText')) {
+    $('bassLevelText').textContent = Math.round(state.lastBassDisplayLevel * 100);
+  }
   return state.audioLevelSmoothed;
 }
 

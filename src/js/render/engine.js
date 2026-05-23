@@ -7,6 +7,9 @@ import { sourceSize, waitForVideoSeek } from '../media/loader.js';
 import { restartGifCanvasForExport } from '../gif-utils.js';
 import { t } from '../utils/i18n.js';
 
+let _lastFgW = 0;
+let _lastFgH = 0;
+
 export function spinSpeed() {
   if (!$('syncOn').checked) return Number($('speed').value) || 0;
   const loop = Math.max(0.05, Number($('loopSeconds').value) || 1);
@@ -15,60 +18,83 @@ export function spinSpeed() {
   return ang / (loop * mult);
 }
 
+let _emptyGuideShown = false;
+
 export function drawFrame(dt) {
   if (!state.paused && !state.exportActive) state.angle += spinSpeed() * Math.PI / 180 * dt;
-  const spinTarget = $('spinTarget').value;
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  if (!$('transparentBg') || !$('transparentBg').checked) {
+  // Cache all DOM reads once per frame
+  const spinTarget = $('spinTarget').value;
+  const transparentBgEl = $('transparentBg');
+  const isTransparent = transparentBgEl && transparentBgEl.checked;
+  const cw = canvas.width;
+  const ch = canvas.height;
+  const halfW = cw / 2;
+  const halfH = ch / 2;
+
+  ctx.clearRect(0, 0, cw, ch);
+  if (!isTransparent) {
     ctx.fillStyle = $('backColor').value;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, cw, ch);
   }
   drawRearBackground(state.rearBg);
 
-  if (!state.rearBg && !state.bg && !state.fg) {
+  const hasMedia = !!(state.rearBg || state.bg || state.fg);
+  if (!hasMedia) {
+    if (!_emptyGuideShown) _emptyGuideShown = true;
     ctx.save();
-    const cx = canvas.width / 2;
-    const cy = canvas.height / 2;
     ctx.strokeStyle = '#dfe5e7';
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(cx - 76, cy);
-    ctx.lineTo(cx + 76, cy);
-    ctx.moveTo(cx, cy - 76);
-    ctx.lineTo(cx, cy + 76);
+    ctx.moveTo(halfW - 76, halfH);
+    ctx.lineTo(halfW + 76, halfH);
+    ctx.moveTo(halfW, halfH - 76);
+    ctx.lineTo(halfW, halfH + 76);
     ctx.stroke();
     ctx.strokeStyle = '#cbd5d9';
     ctx.setLineDash([10, 8]);
-    ctx.strokeRect(cx - 112, cy - 112, 224, 224);
+    ctx.strokeRect(halfW - 112, halfH - 112, 224, 224);
     ctx.setLineDash([]);
     ctx.fillStyle = '#666';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.font = '700 28px Arial';
-    ctx.fillText(t('viewerWorking'), canvas.width / 2, canvas.height / 2 - 22);
+    ctx.fillText(t('viewerWorking'), halfW, halfH - 22);
     ctx.font = '17px Arial';
-    ctx.fillText(t('loadFilesHint'), canvas.width / 2, canvas.height / 2 + 20);
+    ctx.fillText(t('loadFilesHint'), halfW, halfH + 20);
     ctx.restore();
+    drawWatermark();
+    return;
   }
+  _emptyGuideShown = false;
+
+  const bgScaleVal = $('bgScale').value;
+  const bgXVal = Number($('bgX').value) || halfW;
+  const bgYVal = Number($('bgY').value) || halfH;
 
   drawCentered(
     state.bg,
-    Number($('bgX').value) || canvas.width / 2,
-    Number($('bgY').value) || canvas.height / 2,
-    spinnerScale($('bgScale').value, 'bg'),
+    bgXVal,
+    bgYVal,
+    spinnerScale(bgScaleVal, 'bg'),
     spinTarget === 'bg' || spinTarget === 'both' ? state.angle : 0
   );
 
   if (state.fg) {
     let drawable = state.fg;
     const s = sourceSize(state.fg);
-    if ($('keyOn').checked && s.w && s.h) drawable = chromaSource(state.fg, s.w, s.h);
+    _lastFgW = s.w;
+    _lastFgH = s.h;
+    const keyOnEl = $('keyOn');
+    if (keyOnEl && keyOnEl.checked && s.w && s.h) drawable = chromaSource(state.fg, s.w, s.h);
+    const fgScaleVal = $('fgScale').value;
+    const fgXVal = Number($('fgX').value) || halfW;
+    const fgYVal = Number($('fgY').value) || halfH;
     drawCentered(
       drawable,
-      Number($('fgX').value) || canvas.width / 2,
-      Number($('fgY').value) || canvas.height / 2,
-      spinnerScale($('fgScale').value, 'fg'),
+      fgXVal,
+      fgYVal,
+      spinnerScale(fgScaleVal, 'fg'),
       spinTarget === 'fg' || spinTarget === 'both' ? state.angle : 0
     );
   }

@@ -31,12 +31,15 @@ export function canvasHasPaintedPixels(testCanvas) {
     const testCtx = testCanvas.getContext('2d', { willReadFrequently: true });
     const w = testCanvas.width;
     const h = testCanvas.height;
+    const data = testCtx.getImageData(0, 0, w, h).data;
     const stepX = Math.max(1, Math.floor(w / 12));
     const stepY = Math.max(1, Math.floor(h / 12));
     for (let y = 0; y < h; y += stepY) {
       for (let x = 0; x < w; x += stepX) {
-        const p = testCtx.getImageData(Math.min(x, w - 1), Math.min(y, h - 1), 1, 1).data;
-        if (p[3] > 0 || p[0] || p[1] || p[2]) return true;
+        const sx = Math.min(x, w - 1);
+        const sy = Math.min(y, h - 1);
+        const idx = (sy * w + sx) * 4;
+        if (data[idx + 3] > 0 || data[idx] || data[idx + 1] || data[idx + 2]) return true;
       }
     }
   } catch (err) {

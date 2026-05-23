@@ -32,11 +32,15 @@ export function drawCentered(src, x, y, scalePct, rot) {
 
 export function spinnerScale(baseScale, layer) {
   const base = Number(baseScale) || 100;
-  if (!$('audioScaleOn').checked) return base;
-  const target = $('soundTarget') ? $('soundTarget').value : 'bg';
+  const audioScaleEl = $('audioScaleOn');
+  if (!audioScaleEl || !audioScaleEl.checked) return base;
+  const soundTargetEl = $('soundTarget');
+  const target = soundTargetEl ? soundTargetEl.value : 'bg';
   if (target !== 'both' && target !== layer) return base;
-  const pulseAmount = Math.max(0, (Number($('audioScaleAmount').value) || 0) / 100);
-  const response = Math.max(0, (Number($('sizeResponse') ? $('sizeResponse').value : 250) || 250) / 100);
+  const scaleAmountEl = $('audioScaleAmount');
+  const pulseAmount = Math.max(0, (Number(scaleAmountEl ? scaleAmountEl.value : 0) || 0) / 100);
+  const sizeResponseEl = $('sizeResponse');
+  const response = Math.max(0, (Number(sizeResponseEl ? sizeResponseEl.value : 250) || 250) / 100);
   const sizeBoost = Math.min(12, currentAudioLevel() * pulseAmount * response);
   return base * (1 + sizeBoost);
 }

@@ -69,10 +69,12 @@ export async function saveGif() {
     state.exportActive = false;
     setExporting(false);
   };
-  const needsRealtimeFrames = state.bgType === 'video' || state.bgType === 'gif' || state.fgType === 'video' || state.fgType === 'gif' || (state.audio && $('audioScaleOn').checked);
+
+  const hasVideoGif = state.bgType === 'video' || state.bgType === 'gif' || state.fgType === 'video' || state.fgType === 'gif';
+  const hasAudioPulse = state.audio && $('audioScaleOn').checked;
 
   const gif = new GIF({
-    workers: 2,
+    workers: Math.min(navigator.hardwareConcurrency || 4, 8),
     quality,
     width: canvas.width,
     height: canvas.height,
@@ -107,7 +109,11 @@ export async function saveGif() {
         await playExportMedia();
       } else {
         const previousDelay = matchedDelays[i - 1] || delay;
-        if (needsRealtimeFrames) await sleep(previousDelay);
+        if (hasVideoGif || hasAudioPulse) {
+          await sleep(previousDelay);
+        } else if (i % 8 === 0) {
+          await sleep(0);
+        }
         elapsedMs += previousDelay;
 
         if (matchedFgGif) {

@@ -143,6 +143,7 @@ export async function saveWebM() {
 
     status('recordingStart', { mbps, seconds });
     drawExportFrameAtSeconds(0);
+    if (videoTrack && typeof videoTrack.requestFrame === 'function') videoTrack.requestFrame();
     rec.start(100);
     await playExportMedia();
 
