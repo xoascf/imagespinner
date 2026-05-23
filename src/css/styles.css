@@ -247,6 +247,15 @@ label {
   letter-spacing: .01em;
 }
 
+.label {
+  display: block;
+  font-size: 11px;
+  font-weight: 650;
+  color: #38424a;
+  margin: 10px 0 5px;
+  letter-spacing: .01em;
+}
+
 input[type="range"],
 input[type="number"],
 input[type="text"],

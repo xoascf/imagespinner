@@ -35,7 +35,7 @@
     <details open>
       <summary data-i18n="files">Files</summary>
       <div class="inside">
-        <label data-i18n="rearBackgroundFile">Rear background image or video</label>
+        <div class="label" data-i18n="rearBackgroundFile">Rear background image or video</div>
         <label class="file-picker">
           <input id="rearBgFile" type="file" accept="image/*,video/*">
           <span class="file-action" data-i18n="chooseFile">Choose file</span>
@@ -43,7 +43,7 @@
           <button class="file-remove" type="button" hidden data-i18n-aria="removeFile">&times;</button>
         </label>
 
-        <label data-i18n="backgroundFile">Spinner background image or video</label>
+        <div class="label" data-i18n="backgroundFile">Spinner background image or video</div>
         <label class="file-picker">
           <input id="bgFile" type="file" accept="image/*,video/*">
           <span class="file-action" data-i18n="chooseFile">Choose file</span>
@@ -51,7 +51,7 @@
           <button class="file-remove" type="button" hidden data-i18n-aria="removeFile">&times;</button>
         </label>
 
-        <label data-i18n="foregroundFile">Foreground image, PNG, GIF, or video</label>
+        <div class="label" data-i18n="foregroundFile">Foreground image, PNG, GIF, or video</div>
         <label class="file-picker">
           <input id="fgFile" type="file" accept="image/*,video/*">
           <span class="file-action" data-i18n="chooseFile">Choose file</span>
@@ -59,7 +59,7 @@
           <button class="file-remove" type="button" hidden data-i18n-aria="removeFile">&times;</button>
         </label>
 
-        <label data-i18n="backgroundSound">Background sound</label>
+        <div class="label" data-i18n="backgroundSound">Background sound</div>
         <label class="file-picker">
           <input id="audioFile" type="file" accept="audio/*">
           <span class="file-action" data-i18n="chooseFile">Choose file</span>
@@ -75,17 +75,17 @@
     <details open>
       <summary data-i18n="mainControls">Main controls</summary>
       <div class="inside">
-        <label data-i18n="backColor">Color behind pictures</label>
+        <label for="backColor" data-i18n="backColor">Color behind pictures</label>
         <input id="backColor" type="color" value="#ffffff">
         <label><input id="transparentBg" type="checkbox"> <span data-i18n="transparentBackground">Transparent background</span></label>
         <button id="pickBackColorBtn" class="secondary" type="button" data-i18n="pickBackColor">Pick background color from viewer</button>
 
         <label><input id="watermarkOn" type="checkbox" checked> <span data-i18n="watermarkOn">Show watermark</span></label>
-        <label data-i18n="watermarkTextLabel">Watermark text</label>
+        <label for="watermarkText" data-i18n="watermarkTextLabel">Watermark text</label>
         <input id="watermarkText" type="text" value="Trassel Vardias">
-        <label><span data-i18n="watermarkSize">Watermark size</span>: <span id="watermarkSizeText">28</span> px</label>
+        <label for="watermarkSize"><span data-i18n="watermarkSize">Watermark size</span>: <span id="watermarkSizeText">28</span> px</label>
         <input id="watermarkSize" type="range" min="8" max="120" value="28">
-        <label data-i18n="watermarkPosition">Watermark position</label>
+        <label for="watermarkPosition" data-i18n="watermarkPosition">Watermark position</label>
         <select id="watermarkPosition">
           <option value="bottom-right" selected data-i18n="bottomRight">Bottom right</option>
           <option value="bottom-left" data-i18n="bottomLeft">Bottom left</option>
@@ -94,19 +94,19 @@
           <option value="center" data-i18n="center">Center</option>
         </select>
 
-        <label><span data-i18n="spinSpeed">Spin speed</span>: <span id="speedText">30</span> <span data-i18n="degreesSec">degrees/sec</span></label>
+        <label for="speed"><span data-i18n="spinSpeed">Spin speed</span>: <span id="speedText">30</span> <span data-i18n="degreesSec">degrees/sec</span></label>
         <input id="speed" type="range" min="-360" max="360" value="30">
 
-        <label><span data-i18n="backgroundScale">Background scale</span>: <span id="bgScaleText">100</span>%</label>
+        <label for="bgScale"><span data-i18n="backgroundScale">Background scale</span>: <span id="bgScaleText">100</span>%</label>
         <input id="bgScale" type="range" min="5" max="400" value="100">
 
-        <label><span data-i18n="foregroundScale">Foreground scale</span>: <span id="fgScaleText">100</span>%</label>
+        <label for="fgScale"><span data-i18n="foregroundScale">Foreground scale</span>: <span id="fgScaleText">100</span>%</label>
         <input id="fgScale" type="range" min="5" max="400" value="100">
 
-        <label><span data-i18n="rearBackgroundScale">Rear background scale</span>: <span id="rearBgScaleText">100</span>%</label>
+        <label for="rearBgScale"><span data-i18n="rearBackgroundScale">Rear background scale</span>: <span id="rearBgScaleText">100</span>%</label>
         <input id="rearBgScale" type="range" min="5" max="400" value="100">
 
-        <label data-i18n="spinLayer">Spin layer</label>
+        <label for="spinTarget" data-i18n="spinLayer">Spin layer</label>
         <select id="spinTarget">
           <option value="fg" data-i18n="foregroundSpinner">Foreground spinner</option>
           <option value="bg" selected data-i18n="background">Background</option>
@@ -114,21 +114,21 @@
         </select>
 
         <label><input id="audioScaleOn" type="checkbox"> <span data-i18n="pulseFromSound">Pulse spinner size from sound</span></label>
-        <label><span data-i18n="soundPulseAmount">Sound pulse amount</span>: <span id="audioScaleText">35</span>%</label>
+        <label for="audioScaleAmount"><span data-i18n="soundPulseAmount">Sound pulse amount</span>: <span id="audioScaleText">35</span>%</label>
         <input id="audioScaleAmount" type="range" min="0" max="200" value="35">
 
-        <label data-i18n="soundEffectTarget">Apply sound effect to</label>
+        <label for="soundTarget" data-i18n="soundEffectTarget">Apply sound effect to</label>
         <select id="soundTarget">
           <option value="bg" selected data-i18n="soundTargetSpinner">Spinner / background</option>
           <option value="fg" data-i18n="soundTargetForeground">Foreground</option>
           <option value="both" data-i18n="bothLayers">Both layers</option>
         </select>
 
-        <label><span data-i18n="spinnerSizeResponse">Spinner size response</span>: <span id="sizeResponseText">250</span>%</label>
+        <label for="sizeResponse"><span data-i18n="spinnerSizeResponse">Spinner size response</span>: <span id="sizeResponseText">250</span>%</label>
         <input id="sizeResponse" type="range" min="0" max="3000" step="25" value="250">
         <p class="hint" data-i18n="sizeResponseHint">Controls how much the detected bass changes spinner size. Raise this when the bass level is low or noisy.</p>
 
-        <label><span data-i18n="bassPickupSensitivity">Bass pickup sensitivity</span>: <span id="bassSensitivityText">250</span>%</label>
+        <label for="bassSensitivity"><span data-i18n="bassPickupSensitivity">Bass pickup sensitivity</span>: <span id="bassSensitivityText">250</span>%</label>
         <input id="bassSensitivity" type="range" min="25" max="1000" value="250">
         <p class="hint"><span data-i18n="bassLevel">Bass level</span>: <span id="bassLevelText">0</span>%</p>
       </div>
@@ -151,17 +151,17 @@
       <div class="inside">
         <div class="row">
           <div>
-            <label data-i18n="canvasW">Canvas W</label>
+            <label for="canvasW" data-i18n="canvasW">Canvas W</label>
             <input id="canvasW" type="number" value="800" min="100">
           </div>
           <div>
-            <label data-i18n="canvasH">Canvas H</label>
+            <label for="canvasH" data-i18n="canvasH">Canvas H</label>
             <input id="canvasH" type="number" value="800" min="100">
           </div>
         </div>
         <button id="resizeBtn" data-i18n="applyCanvasSize">Apply Canvas Size</button>
 
-        <label data-i18n="moveLayer">Move layer</label>
+        <label for="moveLayer" data-i18n="moveLayer">Move layer</label>
         <select id="moveLayer">
           <option value="fg" selected data-i18n="foreground">Foreground</option>
           <option value="bg" data-i18n="background">Background</option>
@@ -169,32 +169,32 @@
         </select>
         <p class="hint" data-i18n="dragHint">Drag the canvas to move the selected layer.</p>
 
-        <label><span data-i18n="rearBackgroundX">Rear background X</span>: <span id="rearBgXText">400</span></label>
+        <label for="rearBgXRange"><span data-i18n="rearBackgroundX">Rear background X</span>: <span id="rearBgXText">400</span></label>
         <input id="rearBgXRange" type="range" min="0" max="800" value="400">
-        <label><span data-i18n="rearBackgroundY">Rear background Y</span>: <span id="rearBgYText">400</span></label>
+        <label for="rearBgYRange"><span data-i18n="rearBackgroundY">Rear background Y</span>: <span id="rearBgYText">400</span></label>
         <input id="rearBgYRange" type="range" min="0" max="800" value="400">
 
-        <label><span data-i18n="backgroundX">Background X</span>: <span id="bgXText">400</span></label>
+        <label for="bgXRange"><span data-i18n="backgroundX">Background X</span>: <span id="bgXText">400</span></label>
         <input id="bgXRange" type="range" min="0" max="800" value="400">
-        <label><span data-i18n="backgroundY">Background Y</span>: <span id="bgYText">400</span></label>
+        <label for="bgYRange"><span data-i18n="backgroundY">Background Y</span>: <span id="bgYText">400</span></label>
         <input id="bgYRange" type="range" min="0" max="800" value="400">
 
-        <label><span data-i18n="foregroundX">Foreground X</span>: <span id="fgXText">400</span></label>
+        <label for="fgXRange"><span data-i18n="foregroundX">Foreground X</span>: <span id="fgXText">400</span></label>
         <input id="fgXRange" type="range" min="0" max="800" value="400">
-        <label><span data-i18n="foregroundY">Foreground Y</span>: <span id="fgYText">400</span></label>
+        <label for="fgYRange"><span data-i18n="foregroundY">Foreground Y</span>: <span id="fgYText">400</span></label>
         <input id="fgYRange" type="range" min="0" max="800" value="400">
 
         <div class="row">
-          <div><label data-i18n="rearBgX">Rear BG X</label><input id="rearBgX" type="number" value="400"></div>
-          <div><label data-i18n="rearBgY">Rear BG Y</label><input id="rearBgY" type="number" value="400"></div>
+          <div><label for="rearBgX" data-i18n="rearBgX">Rear BG X</label><input id="rearBgX" type="number" value="400"></div>
+          <div><label for="rearBgY" data-i18n="rearBgY">Rear BG Y</label><input id="rearBgY" type="number" value="400"></div>
         </div>
         <div class="row">
-          <div><label data-i18n="bgX">BG X</label><input id="bgX" type="number" value="400"></div>
-          <div><label data-i18n="bgY">BG Y</label><input id="bgY" type="number" value="400"></div>
+          <div><label for="bgX" data-i18n="bgX">BG X</label><input id="bgX" type="number" value="400"></div>
+          <div><label for="bgY" data-i18n="bgY">BG Y</label><input id="bgY" type="number" value="400"></div>
         </div>
         <div class="row">
-          <div><label data-i18n="fgX">FG X</label><input id="fgX" type="number" value="400"></div>
-          <div><label data-i18n="fgY">FG Y</label><input id="fgY" type="number" value="400"></div>
+          <div><label for="fgX" data-i18n="fgX">FG X</label><input id="fgX" type="number" value="400"></div>
+          <div><label for="fgY" data-i18n="fgY">FG Y</label><input id="fgY" type="number" value="400"></div>
         </div>
         <div class="nudge-grid" aria-label="Move selected layer">
           <button class="secondary blank" type="button" tabindex="-1"></button>
@@ -215,11 +215,11 @@
       <div class="inside">
         <button id="matchFgGifBtn" class="secondary" type="button" data-i18n="matchForegroundGifLoop">Match foreground GIF loop (use GIF duration)</button>
         <label><input id="syncOn" type="checkbox"> <span data-i18n="syncSpin">Sync spin to loop length</span></label>
-        <label data-i18n="loopLength">Loop length, seconds</label>
+        <label for="loopSeconds" data-i18n="loopLength">Loop length, seconds</label>
         <input id="loopSeconds" type="number" value="5" min="0.05" step="0.01">
-        <label data-i18n="spinAngleLoop">Spin angle per loop</label>
+        <label for="syncAngle" data-i18n="spinAngleLoop">Spin angle per loop</label>
         <input id="syncAngle" type="number" value="360" step="1">
-        <label data-i18n="loopMultiple">Loop multiple</label>
+        <label for="loopMultiple" data-i18n="loopMultiple">Loop multiple</label>
         <input id="loopMultiple" type="number" value="1" min="0.05" step="0.05">
         <p class="hint"><span data-i18n="computedSpeed">Computed speed</span>: <span id="computedSpeed">72.00</span> <span data-i18n="degreesSec">degrees/sec</span></p>
       </div>
@@ -229,12 +229,12 @@
       <summary data-i18n="chromaKey">Chroma key</summary>
       <div class="inside">
         <label><input id="keyOn" type="checkbox"> <span data-i18n="enableChroma">Enable chroma key</span></label>
-        <label data-i18n="colorRemove">Color to remove</label>
+        <label for="keyColor" data-i18n="colorRemove">Color to remove</label>
         <input id="keyColor" type="color" value="#00ff00">
         <button id="pickKeyColorBtn" class="secondary" type="button" data-i18n="pickKeyColor">Pick chroma color from viewer</button>
-        <label><span data-i18n="tolerance">Tolerance</span>: <span id="tolText">70</span></label>
+        <label for="tol"><span data-i18n="tolerance">Tolerance</span>: <span id="tolText">70</span></label>
         <input id="tol" type="range" min="0" max="255" value="70">
-        <label><span data-i18n="softEdge">Soft edge</span>: <span id="softText">30</span></label>
+        <label for="soft"><span data-i18n="softEdge">Soft edge</span>: <span id="softText">30</span></label>
         <input id="soft" type="range" min="0" max="255" value="30">
       </div>
     </details>
@@ -242,13 +242,13 @@
     <details>
       <summary data-i18n="save">Save</summary>
       <div class="inside">
-        <label data-i18n="seconds">Seconds</label>
+        <label for="recSeconds" data-i18n="seconds">Seconds</label>
         <input id="recSeconds" type="number" value="3" min="0.05" max="600" step="0.01">
-        <label data-i18n="fps">FPS</label>
+        <label for="recFps" data-i18n="fps">FPS</label>
         <input id="recFps" type="number" value="20" min="1" max="60">
-        <label data-i18n="webmBitrate">WebM quality / bitrate, Mbps</label>
+        <label for="webmMbps" data-i18n="webmBitrate">WebM quality / bitrate, Mbps</label>
         <input id="webmMbps" type="number" value="12" min="1" max="80" step="1">
-        <label data-i18n="gifQuality">GIF quality, 1 best / 30 smallest</label>
+        <label for="gifQuality" data-i18n="gifQuality">GIF quality, 1 best / 30 smallest</label>
         <input id="gifQuality" type="number" value="8" min="1" max="30">
         <button id="webmBtn" data-i18n="saveWebm">Save WebM Video</button>
         <button id="gifBtn" class="secondary" data-i18n="saveGif">Save GIF</button>
