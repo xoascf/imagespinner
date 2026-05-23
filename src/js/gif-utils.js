@@ -136,7 +136,7 @@ export async function loadGif(file, target) {
   }).catch(err => console.warn('Could not parse GIF duration', err));
 
   try {
-    if (!window.gifler) {
+    if (!window.gifler) { // DEAD CODE? We bundle this already. Might remove later...
       try { await scriptOnce('https://cdn.jsdelivr.net/npm/gifler@0.1.0/gifler.min.js'); }
       catch (e) { await scriptOnce('https://unpkg.com/gifler@0.1.0/gifler.min.js'); }
     }

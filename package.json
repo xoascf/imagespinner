@@ -10,5 +10,15 @@
     "serve-root": "npx serve . -l 8080 --cors",
     "dev": "node build.mjs --dev"
   },
-  "keywords": ["canvas", "spinner", "video", "gif", "webm", "audio-reactive"]
+  "keywords": [
+    "canvas",
+    "spinner",
+    "video",
+    "gif",
+    "webm",
+    "audio-reactive"
+  ],
+  "devDependencies": {
+    "terser": "^5.48.0"
+  }
 }
