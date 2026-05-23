@@ -12,7 +12,7 @@ import { updatePositionControls, updateNumbers, updateMeta, nudgeLayer, centerSe
 import { pickColorFromCanvasEvent, startColorPick } from './color-picker.js';
 import { saveWebM } from '../export/webm.js';
 import { saveGif } from '../export/gif.js';
-import { downloadHtmlWithDefaults } from './saver.js';
+import { downloadJsonPreset, loadJsonPreset, downloadZippedProject, loadZippedProject } from './saver.js';
 
 function canvasPoint(e) {
   const rect = canvas.getBoundingClientRect();
@@ -207,7 +207,22 @@ export function initControls() {
   $('webmBtn').addEventListener('click', saveWebM);
   $('gifBtn').addEventListener('click', saveGif);
 
-  if ($('downloadDefaultsBtn')) $('downloadDefaultsBtn').addEventListener('click', downloadHtmlWithDefaults);
+  if ($('downloadPresetBtn')) $('downloadPresetBtn').addEventListener('click', downloadJsonPreset);
+  if ($('downloadProjectBtn')) $('downloadProjectBtn').addEventListener('click', downloadZippedProject);
+
+  if ($('loadPresetBtn')) $('loadPresetBtn').addEventListener('click', () => $('loadPresetFile').click());
+  if ($('loadPresetFile')) $('loadPresetFile').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (file) loadJsonPreset(file);
+    e.target.value = '';
+  });
+
+  if ($('loadProjectBtn')) $('loadProjectBtn').addEventListener('click', () => $('loadProjectFile').click());
+  if ($('loadProjectFile')) $('loadProjectFile').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (file) loadZippedProject(file);
+    e.target.value = '';
+  });
   if ($('defaultFolderBtn')) $('defaultFolderBtn').addEventListener('click', loadDefaultAssetsFromFolder);
 
   applyLanguage();

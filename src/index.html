@@ -256,6 +256,23 @@
       </div>
     </details>
 
+    <details id="settingsSaverPanel">
+      <summary data-i18n="projectSettings">Project / Settings</summary>
+      <div class="inside">
+        <p class="hint" data-i18n="saverHint">Save current settings as a JSON preset, or create a zipped project that bundles the media files together with the settings.</p>
+        <div class="button-row">
+          <button id="downloadPresetBtn" type="button" data-i18n="saveJsonPreset">Save JSON Preset</button>
+          <button id="loadPresetBtn" type="button" data-i18n="loadJsonPreset">Load JSON Preset</button>
+        </div>
+        <input id="loadPresetFile" type="file" accept=".json,application/json">
+        <div class="button-row" style="margin-top:6px">
+          <button id="downloadProjectBtn" type="button" data-i18n="saveZippedProject">Save Zipped Project</button>
+          <button id="loadProjectBtn" type="button" data-i18n="loadZippedProject">Load Zipped Project</button>
+        </div>
+        <input id="loadProjectFile" type="file" accept=".zip,application/zip">
+      </div>
+    </details>
+
   </aside>
 
   <main class="viewer">

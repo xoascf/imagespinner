@@ -145,7 +145,19 @@ export const i18n = {
     settingsBalanced: 'Balanced spin settings applied.',
     settingsReset: 'Settings reset.',
     removedFile: 'File removed.',
-    removeFile: 'Remove file'
+    removeFile: 'Remove file',
+    projectSettings: 'Project / Settings',
+    saveJsonPreset: 'Save JSON Preset',
+    saveZippedProject: 'Save Zipped Project',
+    loadJsonPreset: 'Load JSON Preset',
+    loadZippedProject: 'Load Zipped Project',
+    presetSaved: 'Settings preset saved.',
+    projectSaved: 'Zipped project saved.',
+    presetLoaded: 'Preset loaded.',
+    projectLoaded: 'Project loaded.',
+    presetLoadFailed: 'Could not load preset.',
+    projectLoadFailed: 'Could not load project.',
+    saverHint: 'Save current settings as a JSON preset, or create a zipped project that bundles the media files together with the settings.'
   },
   fi: {
     appTitle: 'Kuvapyöritin',
@@ -290,7 +302,19 @@ export const i18n = {
     settingsBalanced: 'Tasapainoiset pyöritysasetukset käytössä.',
     settingsReset: 'Asetukset nollattu.',
     removedFile: 'Tiedosto poistettu.',
-    removeFile: 'Poista tiedosto'
+    removeFile: 'Poista tiedosto',
+    projectSettings: 'Projekti / Asetukset',
+    saveJsonPreset: 'Tallenna JSON-asetukset',
+    saveZippedProject: 'Tallenna zip-projekti',
+    loadJsonPreset: 'Lataa JSON-asetukset',
+    loadZippedProject: 'Lataa zip-projekti',
+    presetSaved: 'Asetuspresetti tallennettu.',
+    projectSaved: 'Zip-projekti tallennettu.',
+    presetLoaded: 'Presetti ladattu.',
+    projectLoaded: 'Projekti ladattu.',
+    presetLoadFailed: 'Asetuspresetin lataus epäonnistui.',
+    projectLoadFailed: 'Projektin lataus epäonnistui.',
+    saverHint: 'Tallenna nykyiset asetukset JSON-presettinä tai luo zip-projekti, joka paketoi mediatiedostot ja asetukset yhteen.'
   }
 };
 
