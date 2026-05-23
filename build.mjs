@@ -98,6 +98,5 @@ const outputHtml = html
 const distDir = join(__dirname, 'dist');
 if (!existsSync(distDir)) mkdirSync(distDir, { recursive: true });
 writeFileSync(join(distDir, 'index.html'), outputHtml);
-writeFileSync(join(__dirname, 'index.html'), outputHtml);
 
-console.log(`Built ${(outputHtml.length / 1024).toFixed(0)} KB → dist/index.html, index.html`);
+console.log(`Built ${(outputHtml.length / 1024).toFixed(0)} KB → dist/index.html`);
