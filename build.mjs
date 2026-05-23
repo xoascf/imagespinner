@@ -125,6 +125,12 @@ async function build() {
   let gifJsCode = '';
   try {
     gifJsCode = await download('https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js');
+    // Patch gif.js to use willReadFrequently on internal canvas contexts
+    // so getImageData readbacks don't trigger Chrome/Edge warnings
+    gifJsCode = gifJsCode.replace(
+      /\.getContext\(\s*(['"])2d\1\s*\)/g,
+      '.getContext("2d",{willReadFrequently:true})'
+    );
     console.log(`Downloaded gif.js (${(gifJsCode.length / 1024).toFixed(0)} KB)`);
   } catch (e) {
     console.warn('Could not download gif.js, will load at runtime:', e.message);
@@ -133,6 +139,8 @@ async function build() {
   let gifWorkerCode = '';
   try {
     gifWorkerCode = await download('https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.worker.js');
+    // Strip sourceMappingURL — it can't resolve from a blob URL
+    gifWorkerCode = gifWorkerCode.replace(/\/\/[#@]\s*sourceMappingURL=.*$/gm, '');
     console.log(`Downloaded gif.worker.js (${(gifWorkerCode.length / 1024).toFixed(0)} KB)`);
   } catch (e) {
     console.warn('Could not download gif.worker.js, will load at runtime:', e.message);

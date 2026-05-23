@@ -104,6 +104,13 @@ export async function saveGif() {
     }
   }
 
+  // Use a dedicated snapshot canvas with willReadFrequently hint
+  // so gif.js getImageData readbacks are fast and warning-free
+  const snapCanvas = document.createElement('canvas');
+  snapCanvas.width = canvas.width;
+  snapCanvas.height = canvas.height;
+  const snapCtx = snapCanvas.getContext('2d', { willReadFrequently: true });
+
   try {
     let elapsedMs = 0;
     const exportSpinSpeedRad = spinSpeed() * Math.PI / 180;
@@ -136,7 +143,8 @@ export async function saveGif() {
         }
       }
 
-      gif.addFrame(canvas, { copy: true, delay: frameDelay });
+      snapCtx.drawImage(canvas, 0, 0);
+      gif.addFrame(snapCanvas, { copy: true, delay: frameDelay });
       status('gifFrames', { done: i + 1, total: frames });
     }
   } catch (e) {
