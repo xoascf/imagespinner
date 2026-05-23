@@ -1,0 +1,14 @@
+{
+  "name": "image-spinner",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Canvas-based image/video spinner compositing tool with audio-reactive effects and export",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "serve": "npx serve src -l 8080 --cors",
+    "serve-root": "npx serve . -l 8080 --cors",
+    "dev": "node build.mjs --dev"
+  },
+  "keywords": ["canvas", "spinner", "video", "gif", "webm", "audio-reactive"]
+}
