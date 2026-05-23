@@ -104,9 +104,13 @@ async function build() {
     .replace(/const\s*\{\s*(\w+)\s*\}\s*=\s*await\s+import\(['"][^'"]+['"]\)/g, (match, name) => {
       return `// ${name} is already available (bundled)`;
     })
+    .replace(/import\(['"][^'"]+['"]\)\.then\(m\s*=>\s*\{\s*((?:m\.\w+\([^)]*\);?\s*)+)\}\)/g, (match, body) => {
+      return body.replace(/m\.(\w+)\(([^)]*)\)/g, '$1($2)');
+    })
     .replace(/import\(['"][^'"]+['"]\)\.then\(m\s*=>\s*m\.(\w+)\(([^)]*)\)\)/g, (match, fnName, args) => {
       return `${fnName}(${args})`;
     })
+    .replace(/typeof\s+__gifWorkerCode\s*!==?\s*['"]undefined['"]/g, 'true')
     .replace(/await\s+import\(['"][^'"]+['"]\)/g, 'undefined')
     .replace(/\n\s*\/\/\s*undefined is already available/g, '');
 
@@ -118,7 +122,38 @@ async function build() {
     console.warn('Could not download gifler, will load at runtime:', e.message);
   }
 
-  let combinedScript = giflerCode ? giflerCode + '\n' + appCode : appCode;
+  let gifJsCode = '';
+  try {
+    gifJsCode = await download('https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js');
+    console.log(`Downloaded gif.js (${(gifJsCode.length / 1024).toFixed(0)} KB)`);
+  } catch (e) {
+    console.warn('Could not download gif.js, will load at runtime:', e.message);
+  }
+
+  let gifWorkerCode = '';
+  try {
+    gifWorkerCode = await download('https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.worker.js');
+    console.log(`Downloaded gif.worker.js (${(gifWorkerCode.length / 1024).toFixed(0)} KB)`);
+  } catch (e) {
+    console.warn('Could not download gif.worker.js, will load at runtime:', e.message);
+  }
+
+  let jszipCode = '';
+  try {
+    jszipCode = await download('https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js');
+    console.log(`Downloaded jszip (${(jszipCode.length / 1024).toFixed(0)} KB)`);
+  } catch (e) {
+    console.warn('Could not download jszip, will load at runtime:', e.message);
+  }
+
+  // Build the worker code declaration so gif.js can create a blob URL offline
+  const workerDecl = gifWorkerCode
+    ? `var __gifWorkerCode = ${JSON.stringify(gifWorkerCode)};`
+    : '';
+
+  // Assemble: libraries first, then app code
+  const libs = [giflerCode, gifJsCode, jszipCode, workerDecl].filter(Boolean).join('\n');
+  let combinedScript = libs ? libs + '\n' + appCode : appCode;
 
   const result = await minify(combinedScript, {
     compress: { booleans: true, conditionals: true, sequences: true, unused: true },

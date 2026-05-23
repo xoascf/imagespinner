@@ -1,7 +1,7 @@
 import { state } from '../state.js';
 import { $, canvas } from '../utils/dom.js';
 import { downloadBlob } from '../utils/files.js';
-import { sleep, scriptOnce } from '../utils/async.js';
+import { sleep } from '../utils/async.js';
 import { resetLoopingMediaForExport, spinSpeed, drawFrame } from '../render/engine.js';
 import { waitForGifFirstFrame } from '../gif-utils.js';
 import { prepareAudioForPlayback } from '../audio/analyzer.js';
@@ -10,7 +10,11 @@ import { status } from '../controls/status.js';
 import { setExporting } from '../controls/status.js';
 
 function makeGifWorkerUrl() {
-  const workerCode = "importScripts('https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.worker.js');";
+  // In bundled build, __gifWorkerCode is inlined by build.mjs
+  // In dev mode, fall back to CDN importScripts
+  const workerCode = typeof __gifWorkerCode !== 'undefined'
+    ? __gifWorkerCode
+    : "importScripts('https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.worker.js');";
   const blob = new Blob([workerCode], { type: 'application/javascript' });
   return URL.createObjectURL(blob);
 }
@@ -24,18 +28,23 @@ export async function saveGif() {
   state.audioBassFloor = 0;
   state.audioBassPeak = 0.08;
   await resetLoopingMediaForExport();
-  try {
-    if (!window.GIF) {
-      try { await scriptOnce('https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js'); }
-      catch (e) { await scriptOnce('https://unpkg.com/gif.js@0.2.0/dist/gif.js'); }
+
+  if (!window.GIF) {
+    // In dev mode, gif.js isn't bundled — try loading from CDN
+    if (typeof __gifWorkerCode === 'undefined') {
+      try {
+        const { scriptOnce } = await import('../utils/async.js');
+        try { await scriptOnce('https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js'); }
+        catch (e) { await scriptOnce('https://unpkg.com/gif.js@0.2.0/dist/gif.js'); }
+      } catch (e) {
+        console.error(e);
+        status('gifExporterFailed');
+        state.angle = savedAngle;
+        state.exportActive = false;
+        setExporting(false);
+        return;
+      }
     }
-  } catch (e) {
-    console.error(e);
-    status('gifExporterFailed');
-    state.angle = savedAngle;
-    state.exportActive = false;
-    setExporting(false);
-    return;
   }
 
   if (!window.GIF) {

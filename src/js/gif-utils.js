@@ -1,6 +1,5 @@
 import { state } from './state.js';
 import { $ } from './utils/dom.js';
-import { scriptOnce } from './utils/async.js';
 import { status } from './controls/status.js';
 
 export async function parseGifDuration(file) {
@@ -139,10 +138,6 @@ export async function loadGif(file, target) {
   }).catch(err => console.warn('Could not parse GIF duration', err));
 
   try {
-    if (!window.gifler) { // DEAD CODE? We bundle this already. Might remove later...
-      try { await scriptOnce('https://cdn.jsdelivr.net/npm/gifler@0.1.0/gifler.min.js'); }
-      catch (e) { await scriptOnce('https://unpkg.com/gifler@0.1.0/gifler.min.js'); }
-    }
     if (token !== (isBg ? state.bgLoadToken : state.gifLoadToken)) return;
     if (!window.gifler) throw new Error('gifler missing');
 
@@ -190,10 +185,6 @@ export async function loadGifFromUrl(url, target, displayName) {
   }
   status('loadingGif');
   try {
-    if (!window.gifler) {
-      try { await scriptOnce('https://cdn.jsdelivr.net/npm/gifler@0.1.0/gifler.min.js'); }
-      catch (e) { await scriptOnce('https://unpkg.com/gifler@0.1.0/gifler.min.js'); }
-    }
     if (token !== (isBg ? state.bgLoadToken : state.gifLoadToken)) return;
     if (!window.gifler) throw new Error('gifler missing');
 

@@ -1,7 +1,6 @@
 import { $ } from '../utils/dom.js';
 import { downloadBlob } from '../utils/files.js';
 import { currentMediaFiles } from '../consts.js';
-import { scriptOnce } from '../utils/async.js';
 import { updateFileName, loadRearBackground, loadBackground, loadForeground, loadAudioFile } from '../media/layers.js';
 
 function collectSettings() {
@@ -64,10 +63,16 @@ export async function loadJsonPreset(file) {
 
 async function loadJSZip() {
   if (window.JSZip) return window.JSZip;
+  // In dev mode only — bundled builds already have JSZip inlined by build.mjs
   try {
-    await scriptOnce('https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js');
-  } catch {
-    await scriptOnce('https://unpkg.com/jszip@3.10.1/dist/jszip.min.js');
+    const { scriptOnce } = await import('../utils/async.js');
+    try {
+      await scriptOnce('https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js');
+    } catch {
+      await scriptOnce('https://unpkg.com/jszip@3.10.1/dist/jszip.min.js');
+    }
+  } catch (e) {
+    console.warn('Could not load JSZip:', e);
   }
   if (!window.JSZip) throw new Error('JSZip could not be loaded');
   return window.JSZip;
