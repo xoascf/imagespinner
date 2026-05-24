@@ -28,6 +28,7 @@ export function updateFileName(id, file) {
 export function loadRearBackground(file) {
   if (!file) return;
   currentMediaFiles.rear = file;
+  updateFileName('rearBgFile', file);
   state.rearBg = null;
   state.rearBgType = 'none';
   revokeIfBlobUrl(state.rearBgUrl);
@@ -55,6 +56,7 @@ export function loadRearBackground(file) {
 export function loadBackground(file) {
   if (!file) return;
   currentMediaFiles.bg = file;
+  updateFileName('bgFile', file);
   state.bgLoadToken++;
   state.bg = null;
   state.bgType = 'none';
@@ -86,6 +88,7 @@ export function loadBackground(file) {
 export function loadForeground(file) {
   if (!file) return;
   currentMediaFiles.fg = file;
+  updateFileName('fgFile', file);
   state.gifLoadToken++;
   state.fg = null;
   state.fgType = 'none';
