@@ -5,7 +5,7 @@ import { sleep } from '../utils/async.js';
 import { resetLoopingMediaForExport, spinSpeed, drawFrame, getExportSeconds, isAutoExportDuration, getExportAngle } from '../render/engine.js';
 import { waitForGifFirstFrame } from '../gif-utils.js';
 import { prepareAudioForPlayback } from '../audio/analyzer.js';
-import { playExportMedia } from '../media/layers.js';
+import { playExportMedia, resumeMediaState } from '../media/layers.js';
 import { status } from '../controls/status.js';
 import { setExporting } from '../controls/status.js';
 
@@ -43,6 +43,7 @@ export async function saveGif() {
         state.angle = savedAngle;
         state.exportActive = false;
         setExporting(false);
+        resumeMediaState();
         return;
       }
     }
@@ -53,6 +54,7 @@ export async function saveGif() {
     state.angle = savedAngle;
     state.exportActive = false;
     setExporting(false);
+    resumeMediaState();
     return;
   }
 
@@ -73,11 +75,10 @@ export async function saveGif() {
   let playedAudioForGif = false;
   const finishGifExport = () => {
     if (playedAudioForGif && state.audio) state.audio.pause();
-    if (state.bgType === 'video' && state.bg) state.bg.pause();
-    if (state.fgType === 'video' && state.fg) state.fg.pause();
     state.angle = savedAngle;
     state.exportActive = false;
     setExporting(false);
+    resumeMediaState();
   };
 
   const hasVideoGif = state.bgType === 'video' || state.bgType === 'gif' || state.fgType === 'video' || state.fgType === 'gif';

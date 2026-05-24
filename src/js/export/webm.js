@@ -3,7 +3,7 @@ import { $, canvas } from '../utils/dom.js';
 import { downloadBlob } from '../utils/files.js';
 import { sleep, waitWithTimeout } from '../utils/async.js';
 import { resetLoopingMediaForExport, spinSpeed, drawFrame, getExportSeconds, isAutoExportDuration, getExportAngle } from '../render/engine.js';
-import { playExportMedia } from '../media/layers.js';
+import { playExportMedia, resumeMediaState } from '../media/layers.js';
 import { status } from '../controls/status.js';
 import { setExporting } from '../controls/status.js';
 import { prepareAudioForPlayback } from '../audio/analyzer.js';
@@ -205,9 +205,9 @@ export async function saveWebM() {
     if (rafId) cancelAnimationFrame(rafId);
     if (hardStopTimer) clearTimeout(hardStopTimer);
     try { if (rec && rec.state !== 'inactive') rec.stop(); } catch (e) {}
-    if (state.audio) state.audio.pause();
-    if (state.bgType === 'video' && state.bg) state.bg.pause();
-    if (state.fgType === 'video' && state.fg) state.fg.pause();
+    if (state.audio && !state.paused) state.audio.play().catch(() => {});
+    else if (state.audio) state.audio.pause();
+    resumeMediaState();
     audioExportTracks.forEach(track => { try { track.stop(); } catch (e) {} });
     if (stream) stream.getTracks().forEach(track => { try { track.stop(); } catch (e) {} });
     state.angle = savedAngle;

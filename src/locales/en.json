@@ -55,6 +55,7 @@
     "foreground": "Foreground",
     "background": "Background",
     "bothLayers": "Both layers",
+    "spinTarget": "Spin target",
     "audioReactive": "Audio reactive",
     "pulseFromSound": "Pulse size from sound",
     "soundPulseAmount": "Pulse amount",

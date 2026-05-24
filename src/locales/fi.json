@@ -55,6 +55,7 @@
     "foreground": "Etuala",
     "background": "Tausta",
     "bothLayers": "Molemmat tasot",
+    "spinTarget": "Pyörivä kohde",
     "audioReactive": "Äänireagoiva",
     "pulseFromSound": "Pulssi äänestä",
     "soundPulseAmount": "Pulssin määrä",

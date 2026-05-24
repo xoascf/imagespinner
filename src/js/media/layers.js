@@ -309,7 +309,25 @@ export function playExportMedia() {
     try {
       video.loop = true;
       video.muted = true;
-      video.play();
+      video.play().catch(() => {});
+    } catch (e) {
+      console.warn(e);
+    }
+  }
+}
+
+export function resumeMediaState() {
+  const videos = [];
+  if (state.rearBgType === 'video' && state.rearBg) videos.push(state.rearBg);
+  if (state.bgType === 'video' && state.bg) videos.push(state.bg);
+  if (state.fgType === 'video' && state.fg) videos.push(state.fg);
+  for (const video of videos) {
+    try {
+      if (state.paused) {
+        video.pause();
+      } else {
+        video.play().catch(() => {});
+      }
     } catch (e) {
       console.warn(e);
     }

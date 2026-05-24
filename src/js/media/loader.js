@@ -29,7 +29,7 @@ export function loadImageFromFile(file, callback, label) {
   };
   img.onerror = () => {
     URL.revokeObjectURL(url);
-    import('../controls/status.js').then(m => m.status('Could not load ' + label.toLowerCase() + '.'));
+    import('../controls/status.js').then(m => m.status(label || 'bgImageFailed'));
   };
   img.src = url;
 }

@@ -4,7 +4,7 @@ import { downloadBlob } from '../utils/files.js';
 import { sleep } from '../utils/async.js';
 import { resetLoopingMediaForExport, spinSpeed, drawFrame, getExportSeconds, isAutoExportDuration, getExportAngle } from '../render/engine.js';
 import { waitForGifFirstFrame } from '../gif-utils.js';
-import { playExportMedia } from '../media/layers.js';
+import { playExportMedia, resumeMediaState } from '../media/layers.js';
 import { status } from '../controls/status.js';
 import { setExporting } from '../controls/status.js';
 
@@ -46,6 +46,7 @@ export async function saveApng() {
         state.angle = savedAngle;
         state.exportActive = false;
         setExporting(false);
+        resumeMediaState();
         status('exportCancelled');
         return;
       }
@@ -75,6 +76,7 @@ export async function saveApng() {
       state.angle = savedAngle;
       state.exportActive = false;
       setExporting(false);
+      resumeMediaState();
       status('exportCancelled');
       return;
     }
@@ -93,5 +95,6 @@ export async function saveApng() {
     state.angle = savedAngle;
     state.exportActive = false;
     setExporting(false);
+    resumeMediaState();
   }
 }

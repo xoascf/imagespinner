@@ -21,8 +21,11 @@ export function t(key) {
 export function formatStatus(key, params) {
   const loc = locales[language] || locales[fallbackLang] || {};
   const tmpl = loc.status?.[key] || locales[fallbackLang]?.status?.[key];
-  if (tmpl && params) {
-    return tmpl.replace(/\{(\w+)\}/g, (_, k) => params[k] != null ? params[k] : k);
+  if (tmpl) {
+    if (params) {
+      return tmpl.replace(/\{(\w+)\}/g, (_, k) => params[k] != null ? params[k] : k);
+    }
+    return tmpl;
   }
   return t(key);
 }

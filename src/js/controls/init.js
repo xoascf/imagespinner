@@ -154,22 +154,6 @@ export function initControls() {
   canvas.addEventListener('pointerup', stopDraggingLayer);
   canvas.addEventListener('pointercancel', stopDraggingLayer);
 
-  function resizeCanvas() {
-    const w = Math.max(100, Number($('canvasW').value) || 800);
-    const h = Math.max(100, Number($('canvasH').value) || 800);
-    if (canvas.width !== w || canvas.height !== h) {
-      canvas.width = w;
-      canvas.height = h;
-      const wrapper = canvas.parentElement;
-      if (wrapper && wrapper.classList.contains('canvas-wrapper')) {
-        wrapper.style.width = w + 'px';
-        wrapper.style.height = h + 'px';
-      }
-      centerLayers();
-      updateMeta();
-    }
-  }
-
   $('canvasW').addEventListener('input', resizeCanvas);
   $('canvasW').addEventListener('change', resizeCanvas);
   $('canvasH').addEventListener('input', resizeCanvas);
@@ -289,5 +273,20 @@ export function initControls() {
     }
   });
 
-  setInterval(updateMeta, 500);
+}
+
+export function resizeCanvas() {
+  const w = Math.max(100, Number($('canvasW').value) || 800);
+  const h = Math.max(100, Number($('canvasH').value) || 800);
+  if (canvas.width !== w || canvas.height !== h) {
+    canvas.width = w;
+    canvas.height = h;
+    const wrapper = canvas.parentElement;
+    if (wrapper && wrapper.classList.contains('canvas-wrapper')) {
+      wrapper.style.width = w + 'px';
+      wrapper.style.height = h + 'px';
+    }
+    centerLayers();
+    updateMeta();
+  }
 }
