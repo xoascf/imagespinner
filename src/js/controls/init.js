@@ -189,7 +189,20 @@ export function initControls() {
   $('resetSettingsBtn').addEventListener('click', resetSettings);
   $('matchFgGifBtn').addEventListener('click', applyForegroundGifLoop);
 
-  ['speed','bgScale','fgScale','rearBgScale','audioScaleAmount','sizeResponse','bassSensitivity','tol','soft','loopSeconds','syncAngle','loopMultiple','syncOn','spinTarget','soundTarget','moveLayer','recSeconds','recFps','transparentBg','watermarkOn','watermarkText','watermarkSize','watermarkPosition'].forEach(id => {
+  if ($('recDuration')) {
+    $('recDuration').addEventListener('change', () => {
+      const isCustom = $('recDuration').value === 'custom';
+      $('recSeconds').hidden = !isCustom;
+      if ($('recSecondsLabel')) $('recSecondsLabel').hidden = !isCustom;
+      if (isCustom && !(Number($('recSeconds').value) > 0)) {
+        $('recSeconds').value = 3;
+      }
+      updateNumbers();
+    });
+  }
+
+  ['speed','bgScale','fgScale','rearBgScale','audioScaleAmount','sizeResponse','bassSensitivity','tol','soft','loopSeconds','syncAngle','loopMultiple','syncOn','spinTarget','soundTarget','moveLayer','recDuration','recSeconds','recFps','transparentBg','watermarkOn','watermarkText','watermarkSize','watermarkPosition'].forEach(id => {
+    if (!$(id)) return;
     $(id).addEventListener('input', () => {
       if (id === 'bassSensitivity' || id === 'sizeResponse' || id === 'soundTarget') {
         state.audioLevelSmoothed = 0;

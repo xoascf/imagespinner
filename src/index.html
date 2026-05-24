@@ -27,7 +27,7 @@
       </div>
       <div class="stat">
         <span data-i18n="export">Export</span>
-        <strong id="exportStat">12.00 auto s / 20fps</strong>
+        <strong id="exportStat">360° 12.0s / 20fps</strong>
       </div>
     </div>
     <button id="pauseBtn" data-i18n="pause">Pause</button>
@@ -242,8 +242,15 @@
     <details>
       <summary data-i18n="save">Save</summary>
       <div class="inside">
-        <label for="recSeconds"><span data-i18n="seconds">Seconds</span> <small data-i18n="autoHint">(0 = auto full spin)</small></label>
-        <input id="recSeconds" type="number" value="0" min="0" max="600" step="0.01">
+        <label for="recDuration" data-i18n="duration">Duration</label>
+        <select id="recDuration">
+          <option value="90" data-i18n="quarterSpin">Quarter spin (90°)</option>
+          <option value="180" data-i18n="halfSpin">Half spin (180°)</option>
+          <option value="360" selected data-i18n="fullSpin">Full spin (360°)</option>
+          <option value="custom" data-i18n="customDuration">Custom seconds</option>
+        </select>
+        <label for="recSeconds" id="recSecondsLabel" data-i18n="seconds" hidden>Seconds</label>
+        <input id="recSeconds" type="number" value="0" min="0.05" max="600" step="0.01" hidden>
         <label for="recFps" data-i18n="fps">FPS</label>
         <input id="recFps" type="number" value="20" min="1" max="60">
         <label for="webmMbps" data-i18n="webmBitrate">WebM quality / bitrate, Mbps</label>

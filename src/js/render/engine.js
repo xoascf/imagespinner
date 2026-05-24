@@ -19,16 +19,26 @@ export function spinSpeed() {
 }
 
 export function getExportSeconds() {
-  const raw = Number($('recSeconds').value);
-  if (raw > 0) return Math.max(0.05, Math.min(600, raw));
-  // Auto: one full 360° rotation
+  const mode = $('recDuration') ? $('recDuration').value : 'custom';
+  if (mode === 'custom') {
+    return Math.max(0.05, Math.min(600, Number($('recSeconds').value) || 3));
+  }
+  // Spin preset: 90, 180, or 360 degrees
+  const angle = Number(mode) || 360;
   const speed = Math.abs(spinSpeed());
   if (speed < 0.01) return 3; // near-zero speed fallback
-  return Math.max(0.1, Math.min(600, 360 / speed));
+  return Math.max(0.1, Math.min(600, angle / speed));
+}
+
+export function getExportAngle() {
+  const mode = $('recDuration') ? $('recDuration').value : 'custom';
+  if (mode === 'custom') return 0;
+  return Number(mode) || 360;
 }
 
 export function isAutoExportDuration() {
-  return !(Number($('recSeconds').value) > 0);
+  const mode = $('recDuration') ? $('recDuration').value : 'custom';
+  return mode !== 'custom';
 }
 
 let _emptyGuideShown = false;

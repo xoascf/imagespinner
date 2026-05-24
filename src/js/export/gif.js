@@ -2,7 +2,7 @@ import { state } from '../state.js';
 import { $, canvas } from '../utils/dom.js';
 import { downloadBlob } from '../utils/files.js';
 import { sleep } from '../utils/async.js';
-import { resetLoopingMediaForExport, spinSpeed, drawFrame, getExportSeconds, isAutoExportDuration } from '../render/engine.js';
+import { resetLoopingMediaForExport, spinSpeed, drawFrame, getExportSeconds, isAutoExportDuration, getExportAngle } from '../render/engine.js';
 import { waitForGifFirstFrame } from '../gif-utils.js';
 import { prepareAudioForPlayback } from '../audio/analyzer.js';
 import { playExportMedia } from '../media/layers.js';
@@ -117,8 +117,9 @@ export async function saveGif() {
     let elapsedMs = 0;
     const exportSpinSpeedRad = spinSpeed() * Math.PI / 180;
     // In auto mode, use exact fractional angle for seamless loops:
-    // angle = 2π × i / frames (guarantees frame 0 and N-1 are evenly spaced)
+    // angle = exportArc × i / frames (guarantees frame 0 and N-1 are evenly spaced)
     const spinSign = spinSpeed() >= 0 ? 1 : -1;
+    const exportArcRad = getExportAngle() * Math.PI / 180;
 
     for (let i = 0; i < frames; i++) {
       const frameDelay = matchedDelays[i] || delay;
@@ -143,7 +144,7 @@ export async function saveGif() {
           state.angle = exportSpinSpeedRad * (timeInLoop / 1000);
         } else if (autoLoop) {
           // Exact fractional positioning: seamless regardless of rounding
-          state.angle = spinSign * 2 * Math.PI * i / frames;
+          state.angle = spinSign * exportArcRad * i / frames;
         } else {
           state.angle += exportSpinSpeedRad * (previousDelay / 1000);
         }

@@ -93,10 +93,10 @@ export function updateNumbers() {
 export function updateMeta() {
   if (!$('canvasStat')) return;
   const canvasText = canvas.width + 'x' + canvas.height;
-  const recRaw = Number($('recSeconds').value);
   const secs = getExportSeconds();
-  const secsLabel = recRaw > 0 ? secs.toFixed(2) : secs.toFixed(2) + ' auto';
-  const exportText = secsLabel + 's / ' + (Number($('recFps').value) || 20) + 'fps';
+  const mode = $('recDuration') ? $('recDuration').value : 'custom';
+  const secsLabel = mode !== 'custom' ? mode + '° ' + secs.toFixed(1) + 's' : secs.toFixed(2) + 's';
+  const exportText = secsLabel + ' / ' + (Number($('recFps').value) || 20) + 'fps';
   const spinLabels = {
     fg: t('fgSpinnerShort'),
     bg: t('bgSpinnerShort'),

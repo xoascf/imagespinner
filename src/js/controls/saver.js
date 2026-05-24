@@ -8,7 +8,7 @@ function collectSettings() {
     'languageSelect','backColor','transparentBg','watermarkOn','watermarkText','watermarkSize','watermarkPosition',
     'speed','bgScale','fgScale','rearBgScale','spinTarget','audioScaleOn','audioScaleAmount','soundTarget',
     'sizeResponse','bassSensitivity','canvasW','canvasH','rearBgX','rearBgY','bgX','bgY','fgX','fgY',
-    'syncOn','loopSeconds','syncAngle','loopMultiple','keyOn','keyColor','tol','soft','recSeconds','recFps',
+    'syncOn','loopSeconds','syncAngle','loopMultiple','keyOn','keyColor','tol','soft','recDuration','recSeconds','recFps',
     'webmMbps','gifQuality'
   ];
   const settings = {};

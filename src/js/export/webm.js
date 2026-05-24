@@ -2,7 +2,7 @@ import { state } from '../state.js';
 import { $, canvas } from '../utils/dom.js';
 import { downloadBlob } from '../utils/files.js';
 import { sleep, waitWithTimeout } from '../utils/async.js';
-import { resetLoopingMediaForExport, spinSpeed, drawFrame, getExportSeconds, isAutoExportDuration } from '../render/engine.js';
+import { resetLoopingMediaForExport, spinSpeed, drawFrame, getExportSeconds, isAutoExportDuration, getExportAngle } from '../render/engine.js';
 import { playExportMedia } from '../media/layers.js';
 import { status } from '../controls/status.js';
 import { setExporting } from '../controls/status.js';
@@ -137,11 +137,12 @@ export async function saveWebM() {
 
     const autoLoop = isAutoExportDuration();
     const spinSign = spinSpeed() >= 0 ? 1 : -1;
+    const exportArcRad = getExportAngle() * Math.PI / 180;
 
     function drawExportFrame(frameIndex) {
       if (autoLoop) {
         // Exact fractional positioning: seamless regardless of rounding
-        state.angle = spinSign * 2 * Math.PI * frameIndex / totalFrames;
+        state.angle = spinSign * exportArcRad * frameIndex / totalFrames;
       } else {
         state.angle = spinSpeed() * Math.PI / 180 * frameIndex * frameDuration;
       }
