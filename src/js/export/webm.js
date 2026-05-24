@@ -4,8 +4,7 @@ import { downloadBlob } from '../utils/files.js';
 import { sleep, waitWithTimeout } from '../utils/async.js';
 import { resetLoopingMediaForExport, spinSpeed, drawFrame, getExportSeconds, isAutoExportDuration, getExportAngle } from '../render/engine.js';
 import { playExportMedia, resumeMediaState } from '../media/layers.js';
-import { status } from '../controls/status.js';
-import { setExporting } from '../controls/status.js';
+import { status, setExporting } from '../controls/status.js';
 import { prepareAudioForPlayback } from '../audio/analyzer.js';
 
 function chooseWebmMimeType(includeAudio) {
@@ -104,8 +103,11 @@ export async function saveWebM() {
     const totalFrames = Math.max(1, Math.round(seconds * fps));
     const frameDuration = 1 / fps;
 
+    // captureStream(fps) lets the browser sample our canvas at the desired
+    // output framerate. We draw continuously via requestAnimationFrame at
+    // ~60fps, so each sample captures a unique, smooth frame. No sleep()
+    // means no timer jitter — perfectly smooth output in every browser.
     stream = canvas.captureStream(fps);
-    const videoTrack = stream.getVideoTracks()[0];
 
     if (state.audio) {
       audioExportTracks = await getAudioTracksForExport();
@@ -136,55 +138,59 @@ export async function saveWebM() {
       try { rec.stop(); } catch (e) { console.warn(e); }
     };
 
+    status('recordingStart', { mbps, seconds });
+
     const autoLoop = isAutoExportDuration();
     const spinSign = spinSpeed() >= 0 ? 1 : -1;
     const exportArcRad = getExportAngle() * Math.PI / 180;
+    const spinSpeedRad = spinSpeed() * Math.PI / 180;
 
-    function drawExportFrame(frameIndex) {
-      if (autoLoop) {
-        // Exact fractional positioning: seamless regardless of rounding
-        state.angle = spinSign * exportArcRad * frameIndex / totalFrames;
-      } else {
-        state.angle = spinSpeed() * Math.PI / 180 * frameIndex * frameDuration;
-      }
-      drawFrame(0);
-      if (videoTrack && typeof videoTrack.requestFrame === 'function') videoTrack.requestFrame();
-    }
-
-    status('recordingStart', { mbps, seconds });
-    drawExportFrame(0);
-    if (videoTrack && typeof videoTrack.requestFrame === 'function') videoTrack.requestFrame();
-    rec.start(100);
     await playExportMedia();
 
+    state.angle = 0;
+    drawFrame(0);
+    rec.start(100);
     const startTime = performance.now();
-    let lastFrameIndex = -1;
-    const tick = now => {
-      const elapsedMs = Math.min(exactMs, Math.max(0, now - startTime));
-      const frameIndex = Math.min(totalFrames - 1, Math.floor(elapsedMs / 1000 * fps));
-      if (frameIndex !== lastFrameIndex) {
-        lastFrameIndex = frameIndex;
-        drawExportFrame(frameIndex);
-        status('recordingFrames', { done: Math.min(frameIndex + 1, totalFrames), total: totalFrames });
-      }
+    let lastReportedFrame = -1;
 
-      if (state.exportCancelled) {
-        setTimeout(stopRecorder, 0);
-        return;
-      }
+    // Use requestAnimationFrame for buttery-smooth continuous drawing.
+    // The browser draws at its native refresh rate (~60fps), and
+    // captureStream(fps) samples from that at the desired output fps.
+    await new Promise(resolve => {
+      const tick = now => {
+        if (state.exportCancelled) { resolve(); return; }
 
-      if (frameIndex >= totalFrames - 1) {
-        // Wait one frame duration so the last frame is properly encoded
-        // before stopping — prevents a truncated last frame on loop
-        setTimeout(stopRecorder, Math.ceil(1000 / fps));
-        return;
-      }
+        const elapsedMs = now - startTime;
+        const t = Math.min(elapsedMs / 1000, seconds);
+
+        // Compute angle from continuous elapsed time — no discrete jumps
+        if (autoLoop) {
+          state.angle = spinSign * exportArcRad * (t / seconds);
+        } else {
+          state.angle = spinSpeedRad * t;
+        }
+        drawFrame(0);
+
+        // Progress reporting
+        const currentFrame = Math.min(totalFrames, Math.round(t * fps));
+        if (currentFrame !== lastReportedFrame) {
+          lastReportedFrame = currentFrame;
+          status('recordingFrames', { done: currentFrame, total: totalFrames });
+        }
+
+        if (elapsedMs >= exactMs) {
+          // Give the MediaRecorder one last moment to flush
+          setTimeout(resolve, 120);
+          return;
+        }
+        rafId = requestAnimationFrame(tick);
+      };
       rafId = requestAnimationFrame(tick);
-    };
-    rafId = requestAnimationFrame(tick);
+    });
 
-    hardStopTimer = setTimeout(stopRecorder, Math.ceil(exactMs) + 1200);
-    await Promise.race([stopped, sleep(Math.ceil(exactMs) + 2500)]);
+    stopRecorder();
+    hardStopTimer = setTimeout(stopRecorder, 2000);
+    await Promise.race([stopped, sleep(3000)]);
 
     if (rec && rec.state !== 'inactive') stopRecorder();
     if (hardStopTimer) clearTimeout(hardStopTimer);

@@ -22,7 +22,7 @@ function collectSettings() {
 
 import { updateNumbers, updatePositionControls } from './position.js';
 import { applyLanguage } from '../utils/i18n.js';
-import { resizeCanvas } from './init.js';
+import { resizeCanvas } from './resize.js';
 import { status } from './status.js';
 import { scriptOnce } from '../utils/async.js';
 

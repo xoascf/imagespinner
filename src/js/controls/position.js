@@ -14,8 +14,10 @@ export function positionIds(layer) {
 export function updatePositionControls() {
   ['rear', 'bg', 'fg'].forEach(layer => {
     const ids = positionIds(layer);
-    const x = Math.round(Number($(ids.x).value) || canvas.width / 2);
-    const y = Math.round(Number($(ids.y).value) || canvas.height / 2);
+    const xVal = $(ids.x).value;
+    const yVal = $(ids.y).value;
+    const x = Math.round(xVal === '' ? canvas.width / 2 : Number(xVal));
+    const y = Math.round(yVal === '' ? canvas.height / 2 : Number(yVal));
     $(ids.x).value = x;
     $(ids.y).value = y;
     if ($(ids.x + 'Range')) $(ids.x + 'Range').value = x;
@@ -88,7 +90,15 @@ export function updateMeta() {
   const canvasText = canvas.width + '×' + canvas.height;
   const secs = getExportSeconds();
   const mode = $('recDuration') ? $('recDuration').value : 'custom';
-  const secsLabel = mode !== 'custom' ? mode + '° ' + secs.toFixed(1) + 's' : secs.toFixed(2) + 's';
+  let secsLabel;
+  if (mode === 'custom') {
+    secsLabel = secs.toFixed(2) + 's';
+  } else if (mode === 'audio') {
+    secsLabel = 'Audio ' + secs.toFixed(1) + 's';
+  } else {
+    const angle = mode === 'angle' ? (Number($('recAngle').value) || 360) : mode;
+    secsLabel = angle + '° ' + secs.toFixed(1) + 's';
+  }
   const exportText = secsLabel + ' / ' + (Number($('recFps').value) || 20) + 'fps';
   const spinLabels = {
     fg: t('fgSpinnerShort'),

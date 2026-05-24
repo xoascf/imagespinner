@@ -133,15 +133,10 @@ export function drawFrame(dt) {
   drawWatermark();
 }
 
-export function drawExportFrame(dt) {
-  state.angle += spinSpeed() * Math.PI / 180 * dt;
-  drawFrame(0);
-}
-
 export function animate(now) {
   const dt = Math.min(0.1, (now - state.lastTime) / 1000);
   state.lastTime = now;
-  drawFrame(dt);
+  if (!state.exportActive) drawFrame(dt);
   requestAnimationFrame(animate);
 }
 

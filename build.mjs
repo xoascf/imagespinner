@@ -155,12 +155,17 @@ async function build() {
     upngCode = pakoCode + '\n' + upngCode;
   }
 
+  const upngWorkerDecl = upngCode
+    ? `var __upngWorkerCode = ${JSON.stringify(upngCode)};`
+    : '';
+
   const libCodes = [
     downloaded['gifler'] || '',
     gifJsCode,
     downloaded['jszip'] || '',
     upngCode,
-    workerDecl
+    workerDecl,
+    upngWorkerDecl
   ].filter(Boolean);
 
   // Auto-discover and inline locale JSON files

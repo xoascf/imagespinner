@@ -14,7 +14,7 @@ import { saveWebM } from '../export/webm.js';
 import { saveGif } from '../export/gif.js';
 import { saveApng } from '../export/apng.js';
 import { saveHtml } from '../export/html-wallpaper.js';
-import { cancelExport } from './status.js';
+import { resizeCanvas } from './resize.js';
 import { downloadJsonPreset, loadJsonPreset, downloadZippedProject, loadZippedProject } from './saver.js';
 import { loadSession, triggerAutosave, clearWorkspace } from './session.js';
 import { prepareAudioForPlayback } from '../audio/analyzer.js';
@@ -271,20 +271,4 @@ export function initControls() {
 
 }
 
-export function resizeCanvas(force = false, center = true) {
-  const w = Math.max(100, Number($('canvasW').value) || 800);
-  const h = Math.max(100, Number($('canvasH').value) || 800);
-  if (force || canvas.width !== w || canvas.height !== h) {
-    canvas.width = w;
-    canvas.height = h;
-    const wrapper = canvas.parentElement;
-    if (wrapper && wrapper.classList.contains('canvas-wrapper')) {
-      wrapper.style.width = w + 'px';
-      wrapper.style.height = h + 'px';
-    }
-    if (center !== false) {
-      centerLayers();
-    }
-    updateMeta();
-  }
-}
+

@@ -2,7 +2,7 @@ import { state } from '../state.js';
 import { $, canvas } from '../utils/dom.js';
 import { status } from './status.js';
 import { centerLayers, updatePositionControls, updateNumbers, updateMeta } from './position.js';
-import { resizeCanvas } from './init.js';
+import { resizeCanvas } from './resize.js';
 
 export function applyBalancedSettings(showStatus) {
   $('backColor').value = '#ffffff';

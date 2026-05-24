@@ -4,7 +4,7 @@ import { SETTING_IDS } from '../registry.js';
 import { saveToIDB, getFromIDB, clearIDB } from '../utils/storage-idb.js';
 import { status } from './status.js';
 import { updateNumbers, updatePositionControls } from './position.js';
-import { resizeCanvas } from './init.js';
+import { resizeCanvas } from './resize.js';
 import { loadBackground, loadForeground, loadRearBackground, loadAudioFile } from '../media/layers.js';
 
 let autosaveTimer = null;

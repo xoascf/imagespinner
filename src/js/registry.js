@@ -23,7 +23,7 @@ export const INPUT_IDS = [
   'tol', 'soft', 'loopSeconds', 'syncAngle', 'loopMultiple',
   'syncOn', 'spinTarget', 'soundTarget', 'moveLayer',
   'recDuration', 'recAngle', 'recSeconds', 'recFps',
-  'transparentBg', 'watermarkOn', 'watermarkText',
+  'webmMbps', 'gifQuality', 'transparentBg', 'watermarkOn', 'watermarkText',
   'watermarkSize', 'watermarkPosition',
   'canvasW', 'canvasH', 'rearBgX', 'rearBgY', 'bgX', 'bgY', 'fgX', 'fgY'
 ];

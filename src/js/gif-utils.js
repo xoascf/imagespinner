@@ -1,5 +1,6 @@
 import { state } from './state.js';
-import { updateMeta } from './controls/position.js';
+// updateMeta is available at call time in the concatenated build.
+// We avoid importing it to prevent a circular dep chain: engine→gif-utils→position→engine.
 import { $ } from './utils/dom.js';
 import { status } from './controls/status.js';
 

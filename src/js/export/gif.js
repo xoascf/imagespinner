@@ -6,8 +6,7 @@ import { resetLoopingMediaForExport, spinSpeed, drawFrame, getExportSeconds, isA
 import { waitForGifFirstFrame } from '../gif-utils.js';
 import { prepareAudioForPlayback } from '../audio/analyzer.js';
 import { playExportMedia, resumeMediaState } from '../media/layers.js';
-import { status } from '../controls/status.js';
-import { setExporting } from '../controls/status.js';
+import { status, setExporting } from '../controls/status.js';
 
 function makeGifWorkerUrl() {
   // In bundled build, __gifWorkerCode is inlined by build.mjs

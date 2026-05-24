@@ -5,8 +5,7 @@ import { sleep } from '../utils/async.js';
 import { resetLoopingMediaForExport, spinSpeed, drawFrame, getExportSeconds, isAutoExportDuration, getExportAngle } from '../render/engine.js';
 import { waitForGifFirstFrame } from '../gif-utils.js';
 import { playExportMedia, resumeMediaState } from '../media/layers.js';
-import { status } from '../controls/status.js';
-import { setExporting } from '../controls/status.js';
+import { status, setExporting } from '../controls/status.js';
 
 export async function saveApng() {
   if (typeof UPNG === 'undefined') {
@@ -38,9 +37,14 @@ export async function saveApng() {
     const exportArcRad = getExportAngle() * Math.PI / 180;
     const exportSpinSpeedRad = spinSpeed() * Math.PI / 180;
 
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
     const w = canvas.width;
     const h = canvas.height;
+    
+    // Use an offscreen canvas with willReadFrequently to prevent browser warnings
+    const offscreen = document.createElement('canvas');
+    offscreen.width = w;
+    offscreen.height = h;
+    const offCtx = offscreen.getContext('2d', { willReadFrequently: true });
 
     const frameBuffers = [];
     const delays = [];
@@ -70,7 +74,8 @@ export async function saveApng() {
         drawFrame(0);
       }
 
-      const imageData = ctx.getImageData(0, 0, w, h);
+      offCtx.drawImage(canvas, 0, 0);
+      const imageData = offCtx.getImageData(0, 0, w, h);
       frameBuffers.push(imageData.data.buffer.slice(0));
       delays.push(delay);
       status('apngFrames', { done: i + 1, total: frames });
@@ -86,9 +91,41 @@ export async function saveApng() {
     }
 
     status('apngEncoding');
-    await sleep(50); // let UI update
 
-    const apngData = UPNG.encode(frameBuffers, w, h, 0, delays);
+    const workerBlob = new Blob([
+      `var window = self;\n`,
+      typeof __upngWorkerCode !== 'undefined' ? __upngWorkerCode : '',
+      `
+      self.onmessage = function(e) {
+        try {
+          const apngData = UPNG.encode(e.data.frames, e.data.w, e.data.h, 0, e.data.delays);
+          self.postMessage({ success: true, data: apngData }, [apngData]);
+        } catch (err) {
+          self.postMessage({ success: false, error: err.toString() });
+        }
+      };
+      `
+    ], { type: 'application/javascript' });
+
+    const apngData = await new Promise((resolve, reject) => {
+      const workerUrl = URL.createObjectURL(workerBlob);
+      const worker = new Worker(workerUrl);
+      worker.onmessage = e => {
+        URL.revokeObjectURL(workerUrl);
+        if (e.data.success) resolve(e.data.data);
+        else reject(new Error(e.data.error));
+      };
+      worker.onerror = err => {
+        URL.revokeObjectURL(workerUrl);
+        reject(err);
+      };
+      // Transfer the ArrayBuffers to the worker to avoid doubling memory
+      worker.postMessage(
+        { frames: frameBuffers, w, h, delays },
+        frameBuffers
+      );
+    });
+
     const blob = new Blob([apngData], { type: 'image/apng' });
     downloadBlob(blob, 'image-spinner.apng');
     status('apngSaved');

@@ -43,9 +43,9 @@ export function populateLanguageSelect() {
   sel.value = language;
 }
 
-import { updatePauseBtnText } from '../controls/status.js';
-import { updateMeta } from '../controls/position.js';
-
+// updatePauseBtnText and updateMeta are defined in other modules but available
+// at call time in the concatenated build. We avoid importing them here to
+// prevent circular dependency chains (i18n ↔ status, i18n ↔ position).
 export function applyLanguage() {
   document.documentElement.lang = language;
   document.title = t('appTitle');
@@ -59,6 +59,7 @@ export function applyLanguage() {
   const statusKey = $('status').dataset.statusKey || 'ready';
   const params = $('status').dataset.statusParams ? JSON.parse($('status').dataset.statusParams) : null;
   if ($('statusText')) $('statusText').textContent = formatStatus(statusKey, params);
-  updatePauseBtnText();
-  updateMeta();
+  // These are safe to call because they're always defined before applyLanguage runs
+  if (typeof updatePauseBtnText === 'function') updatePauseBtnText();
+  if (typeof updateMeta === 'function') updateMeta();
 }
