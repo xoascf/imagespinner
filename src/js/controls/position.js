@@ -1,6 +1,7 @@
 import { state } from '../state.js';
 import { $, canvas } from '../utils/dom.js';
 import { t } from '../utils/i18n.js';
+import { getExportSeconds } from '../render/engine.js';
 
 export function positionIds(layer) {
   if (layer === 'rear') return { x: 'rearBgX', y: 'rearBgY', xr: 'rearBgXRange', yr: 'rearBgYRange', xt: 'rearBgXText', yt: 'rearBgYText' };
@@ -92,7 +93,10 @@ export function updateNumbers() {
 export function updateMeta() {
   if (!$('canvasStat')) return;
   const canvasText = canvas.width + 'x' + canvas.height;
-  const exportText = (Number($('recSeconds').value) || 3) + 's / ' + (Number($('recFps').value) || 20) + 'fps';
+  const recRaw = Number($('recSeconds').value);
+  const secs = getExportSeconds();
+  const secsLabel = recRaw > 0 ? secs.toFixed(2) : secs.toFixed(2) + ' auto';
+  const exportText = secsLabel + 's / ' + (Number($('recFps').value) || 20) + 'fps';
   const spinLabels = {
     fg: t('fgSpinnerShort'),
     bg: t('bgSpinnerShort'),

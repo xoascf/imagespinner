@@ -2,7 +2,7 @@ import { state } from '../state.js';
 import { $, canvas } from '../utils/dom.js';
 import { downloadBlob } from '../utils/files.js';
 import { sleep, waitWithTimeout } from '../utils/async.js';
-import { resetLoopingMediaForExport, spinSpeed, drawFrame } from '../render/engine.js';
+import { resetLoopingMediaForExport, spinSpeed, drawFrame, getExportSeconds, isAutoExportDuration } from '../render/engine.js';
 import { playExportMedia } from '../media/layers.js';
 import { status } from '../controls/status.js';
 import { setExporting } from '../controls/status.js';
@@ -96,7 +96,7 @@ export async function saveWebM() {
     await resetLoopingMediaForExport();
 
     const fps = Math.max(1, Number($('recFps').value) || 20);
-    const seconds = Math.max(0.05, Number($('recSeconds').value) || 3);
+    const seconds = getExportSeconds();
     const mbps = Math.max(1, Number($('webmMbps').value) || 12);
     const bitsPerSecond = mbps * 1000 * 1000;
     const exactMs = seconds * 1000;
@@ -135,14 +135,22 @@ export async function saveWebM() {
       try { rec.stop(); } catch (e) { console.warn(e); }
     };
 
-    function drawExportFrameAtSeconds(tSeconds) {
-      state.angle = spinSpeed() * Math.PI / 180 * tSeconds;
+    const autoLoop = isAutoExportDuration();
+    const spinSign = spinSpeed() >= 0 ? 1 : -1;
+
+    function drawExportFrame(frameIndex) {
+      if (autoLoop) {
+        // Exact fractional positioning: seamless regardless of rounding
+        state.angle = spinSign * 2 * Math.PI * frameIndex / totalFrames;
+      } else {
+        state.angle = spinSpeed() * Math.PI / 180 * frameIndex * frameDuration;
+      }
       drawFrame(0);
       if (videoTrack && typeof videoTrack.requestFrame === 'function') videoTrack.requestFrame();
     }
 
     status('recordingStart', { mbps, seconds });
-    drawExportFrameAtSeconds(0);
+    drawExportFrame(0);
     if (videoTrack && typeof videoTrack.requestFrame === 'function') videoTrack.requestFrame();
     rec.start(100);
     await playExportMedia();
@@ -154,13 +162,13 @@ export async function saveWebM() {
       const frameIndex = Math.min(totalFrames - 1, Math.floor(elapsedMs / 1000 * fps));
       if (frameIndex !== lastFrameIndex) {
         lastFrameIndex = frameIndex;
-        drawExportFrameAtSeconds(frameIndex * frameDuration);
+        drawExportFrame(frameIndex);
         status('recordingFrames', { done: Math.min(frameIndex + 1, totalFrames), total: totalFrames });
       }
 
-      if (elapsedMs >= exactMs) {
-        drawExportFrameAtSeconds((totalFrames - 1) * frameDuration);
-        setTimeout(stopRecorder, 20);
+      if (frameIndex >= totalFrames - 1) {
+        // Last unique frame already drawn above — stop promptly
+        setTimeout(stopRecorder, 0);
         return;
       }
       rafId = requestAnimationFrame(tick);

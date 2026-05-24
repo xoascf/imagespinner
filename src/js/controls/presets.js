@@ -52,7 +52,7 @@ export function resetSettings() {
   canvas.height = 800;
   $('canvasW').value = 800;
   $('canvasH').value = 800;
-  $('recSeconds').value = 3;
+  $('recSeconds').value = 0;
   applyBalancedSettings(false);
   status('settingsReset');
 }

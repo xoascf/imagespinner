@@ -18,6 +18,19 @@ export function spinSpeed() {
   return ang / (loop * mult);
 }
 
+export function getExportSeconds() {
+  const raw = Number($('recSeconds').value);
+  if (raw > 0) return Math.max(0.05, Math.min(600, raw));
+  // Auto: one full 360° rotation
+  const speed = Math.abs(spinSpeed());
+  if (speed < 0.01) return 3; // near-zero speed fallback
+  return Math.max(0.1, Math.min(600, 360 / speed));
+}
+
+export function isAutoExportDuration() {
+  return !(Number($('recSeconds').value) > 0);
+}
+
 let _emptyGuideShown = false;
 
 export function drawFrame(dt) {

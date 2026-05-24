@@ -2,7 +2,7 @@ import { state } from '../state.js';
 import { $, canvas } from '../utils/dom.js';
 import { downloadBlob } from '../utils/files.js';
 import { sleep } from '../utils/async.js';
-import { resetLoopingMediaForExport, spinSpeed, drawFrame } from '../render/engine.js';
+import { resetLoopingMediaForExport, spinSpeed, drawFrame, getExportSeconds, isAutoExportDuration } from '../render/engine.js';
 import { waitForGifFirstFrame } from '../gif-utils.js';
 import { prepareAudioForPlayback } from '../audio/analyzer.js';
 import { playExportMedia } from '../media/layers.js';
@@ -56,7 +56,7 @@ export async function saveGif() {
   }
 
   let fps = Math.max(1, Math.min(60, Number($('recFps').value) || 20));
-  let seconds = Math.max(0.05, Number($('recSeconds').value) || 3);
+  let seconds = getExportSeconds();
   const matchedFgGif = state.fgType === 'gif' && state.fgGifDuration > 0 && Math.abs(seconds - state.fgGifDuration) < 0.02 && state.fgGifFrames > 0;
   const matchedDelays = matchedFgGif && state.fgGifDelays && state.fgGifDelays.length ? state.fgGifDelays.slice(0, state.fgGifFrames) : [];
   let frames = matchedFgGif ? state.fgGifFrames : Math.round(fps * seconds);
@@ -111,9 +111,14 @@ export async function saveGif() {
   snapCanvas.height = canvas.height;
   const snapCtx = snapCanvas.getContext('2d', { willReadFrequently: true });
 
+  const autoLoop = isAutoExportDuration() && !matchedFgGif;
+
   try {
     let elapsedMs = 0;
     const exportSpinSpeedRad = spinSpeed() * Math.PI / 180;
+    // In auto mode, use exact fractional angle for seamless loops:
+    // angle = 2π × i / frames (guarantees frame 0 and N-1 are evenly spaced)
+    const spinSign = spinSpeed() >= 0 ? 1 : -1;
 
     for (let i = 0; i < frames; i++) {
       const frameDelay = matchedDelays[i] || delay;
@@ -136,11 +141,13 @@ export async function saveGif() {
           const loopMs = Math.max(1, matchedDelays.reduce((a, b) => a + b, 0));
           const timeInLoop = Math.min(elapsedMs, Math.max(0, loopMs - frameDelay));
           state.angle = exportSpinSpeedRad * (timeInLoop / 1000);
-          drawFrame(0);
+        } else if (autoLoop) {
+          // Exact fractional positioning: seamless regardless of rounding
+          state.angle = spinSign * 2 * Math.PI * i / frames;
         } else {
           state.angle += exportSpinSpeedRad * (previousDelay / 1000);
-          drawFrame(0);
         }
+        drawFrame(0);
       }
 
       snapCtx.drawImage(canvas, 0, 0);
