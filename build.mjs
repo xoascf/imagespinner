@@ -202,7 +202,7 @@ async function build() {
 
   // Copy PWA assets
   const srcDir = join(__dirname, 'src');
-  ['manifest.json', 'sw.js', 'favicon.ico', 'favicon.png'].forEach(file => {
+  ['manifest.json', 'sw.js', 'favicon.ico', 'favicon.png', 'favicon.svg'].forEach(file => {
     const srcPath = join(srcDir, file);
     if (existsSync(srcPath)) {
       copyFileSync(srcPath, join(distDir, file));
