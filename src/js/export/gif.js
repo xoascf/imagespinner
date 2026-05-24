@@ -1,7 +1,7 @@
 import { state } from '../state.js';
 import { $, canvas } from '../utils/dom.js';
 import { downloadBlob } from '../utils/files.js';
-import { sleep } from '../utils/async.js';
+import { sleep, scriptOnce } from '../utils/async.js';
 import { resetLoopingMediaForExport, spinSpeed, drawFrame, getExportSeconds, isAutoExportDuration, getExportAngle } from '../render/engine.js';
 import { waitForGifFirstFrame } from '../gif-utils.js';
 import { prepareAudioForPlayback } from '../audio/analyzer.js';
@@ -28,20 +28,18 @@ export async function saveGif() {
   state.audioLevelSmoothed = 0;
   state.audioBassFloor = 0;
   state.audioBassPeak = 0.08;
+  const wasAudioPlaying = state.audio && !state.audio.paused;
+  if (state.audio) {
+    try { state.audio.pause(); } catch (e) {}
+  }
   await resetLoopingMediaForExport();
 
   if (!window.GIF) {
     // In dev mode, gif.js isn't bundled — try loading from CDN
     if (typeof __gifWorkerCode === 'undefined') {
       try {
-        const { scriptOnce } = await import('../utils/async.js');
-        try { await scriptOnce('https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js'); }
-        catch (e) { await scriptOnce('https://unpkg.com/gif.js@0.2.0/dist/gif.js'); }
+        await scriptOnce('https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js', 'GIF');
       } catch (e) {
-        console.error(e);
-        status('gifExporterFailed');
-        state.angle = savedAngle;
-        state.exportActive = false;
         setExporting(false);
         resumeMediaState();
         return;
@@ -79,6 +77,9 @@ export async function saveGif() {
     state.exportActive = false;
     setExporting(false);
     resumeMediaState();
+    if (wasAudioPlaying && state.audio) {
+      try { state.audio.play(); } catch (e) {}
+    }
   };
 
   const hasVideoGif = state.bgType === 'video' || state.bgType === 'gif' || state.fgType === 'video' || state.fgType === 'gif';

@@ -1,5 +1,7 @@
 import { state } from '../state.js';
 import { $ } from '../utils/dom.js';
+import { status } from '../controls/status.js';
+import { waitWithTimeout } from '../utils/async.js';
 
 export function setupAudioGraph() {
   if (!state.audio) return null;
@@ -108,7 +110,6 @@ export async function getAudioTracksForExport() {
     try { state.audio.currentTime = 0; } catch (e) {}
 
     tracks = captureAudioTracksFromElement();
-    const { waitWithTimeout } = await import('../utils/async.js');
     const playStarted = await waitWithTimeout(state.audio.play(), 1400);
     if (!playStarted) throw new Error('Audio play did not start in time');
 
@@ -117,11 +118,13 @@ export async function getAudioTracksForExport() {
       tracks = cloneTracks(state.audioStreamDest.stream.getAudioTracks());
     }
   } catch (e) {
-    console.warn(e);
-    tracks.forEach(track => { try { track.stop(); } catch (err) {} });
-    tracks = [];
-    const { status } = await import('../controls/status.js');
-    status('audioCaptureBlocked');
+    await waitWithTimeout(50);
+  }
+
+  try {
+    await state.audio.play();
+  } catch (err) {
+    status('audioPlayFailed');
   }
   return tracks;
 }

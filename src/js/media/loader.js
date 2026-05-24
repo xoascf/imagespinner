@@ -29,7 +29,7 @@ export function loadImageFromFile(file, callback, label) {
   };
   img.onerror = () => {
     URL.revokeObjectURL(url);
-    import('../controls/status.js').then(m => m.status(label || 'bgImageFailed'));
+    status(label || 'bgImageFailed');
   };
   img.src = url;
 }
@@ -41,13 +41,13 @@ export function loadStillImageFile(file, assign, successKey, failKey) {
     if (finished) return;
     finished = true;
     assign(drawable, backingUrl || null);
-    import('../controls/position.js').then(m => m.updateMeta());
-    import('../controls/status.js').then(m => m.status(successKey));
+    updateMeta();
+    status(successKey);
   };
   const finishFail = () => {
     if (finished) return;
     finished = true;
-    import('../controls/status.js').then(m => m.status(failKey));
+    status(failKey);
   };
 
   if (window.createImageBitmap) {
@@ -109,21 +109,21 @@ export function loadVideoFileObject(file, assign, successKey, failKey) {
     if (!hasSize) return;
     finished = true;
       assign(video, currentUrl);
-    import('../controls/position.js').then(m => m.updateMeta());
-    import('../controls/status.js').then(m => m.status(successKey));
-    video.play().catch(() => import('../controls/status.js').then(m => m.status(successKey === 'fgVideoLoaded' ? 'fgVideoAutoplay' : 'bgVideoAutoplay')));
+    updateMeta();
+    status(successKey);
+    video.play().catch(() => status(successKey === 'fgVideoLoaded' ? 'fgVideoAutoplay' : 'bgVideoAutoplay'));
   };
 
   const useFallback = () => {
     if (finished) return;
-    if (triedDataUrl) { import('../controls/status.js').then(m => m.status(failKey)); return; }
+    if (triedDataUrl) { status(failKey); return; }
     triedDataUrl = true;
     fileToDataUrlString(file).then(url => {
       revokeIfBlobUrl(currentUrl);
       currentUrl = url;
       video.src = url;
       video.load();
-    }).catch(() => import('../controls/status.js').then(m => m.status(failKey)));
+    }).catch(() => status(failKey));
   };
 
   video.addEventListener('loadedmetadata', finishSuccess);

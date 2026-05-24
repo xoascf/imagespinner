@@ -7,8 +7,7 @@ import { updateFileName, loadRearBackground, loadBackground, loadForeground, loa
 import { loadDefaultAssets, loadDefaultAssetsFromFolder } from '../media/defaults.js';
 import { loadQueryAssets } from '../url-loader.js';
 import { applyBalancedSettings, applyAudioDuration, resetSettings, applyForegroundGifLoop } from './presets.js';
-import { status } from './status.js';
-import { updatePauseBtnText, setExporting } from './status.js';
+import { status, updatePauseBtnText, setExporting, cancelExport } from './status.js';
 import { updatePositionControls, updateNumbers, updateMeta, nudgeLayer, centerSelectedLayer, setLayerPosition, positionIds, centerLayers } from './position.js';
 import { pickColorFromCanvasEvent, startColorPick } from './color-picker.js';
 import { saveWebM } from '../export/webm.js';
@@ -18,6 +17,7 @@ import { saveHtml } from '../export/html-wallpaper.js';
 import { cancelExport } from './status.js';
 import { downloadJsonPreset, loadJsonPreset, downloadZippedProject, loadZippedProject } from './saver.js';
 import { loadSession, triggerAutosave, clearWorkspace } from './session.js';
+import { prepareAudioForPlayback } from '../audio/analyzer.js';
 
 function canvasPoint(e) {
   const rect = canvas.getBoundingClientRect();
@@ -88,8 +88,9 @@ export function initControls() {
     if (!state.audio) { status('chooseAudio'); return; }
     if (state.audio.paused) {
       try {
-        const { prepareAudioForPlayback } = await import('../audio/analyzer.js');
-        await prepareAudioForPlayback();
+        if (state.exportType !== 'html') {
+          await prepareAudioForPlayback();
+        }
         await state.audio.play();
         updateMeta();
       } catch (e) {

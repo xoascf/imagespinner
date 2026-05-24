@@ -4,6 +4,7 @@ import { SETTING_IDS } from '../registry.js';
 import { saveToIDB, getFromIDB, clearIDB } from '../utils/storage-idb.js';
 import { status } from './status.js';
 import { updateNumbers, updatePositionControls } from './position.js';
+import { resizeCanvas } from './init.js';
 import { loadBackground, loadForeground, loadRearBackground, loadAudioFile } from '../media/layers.js';
 
 let autosaveTimer = null;
@@ -63,7 +64,7 @@ export async function loadSession() {
       });
       updateNumbers();
       updatePositionControls();
-      import('./init.js').then(m => { if (m.resizeCanvas) m.resizeCanvas(true, false); });
+      resizeCanvas(true, false);
     }
 
     if (sessionData.rearBgFile) await loadRearBackground(sessionData.rearBgFile);

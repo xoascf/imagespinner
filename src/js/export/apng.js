@@ -22,6 +22,10 @@ export async function saveApng() {
   state.audioLevelSmoothed = 0;
   state.audioBassFloor = 0;
   state.audioBassPeak = 0.08;
+  const wasAudioPlaying = state.audio && !state.audio.paused;
+  if (state.audio) {
+    try { state.audio.pause(); } catch (e) {}
+  }
   await resetLoopingMediaForExport();
 
   try {
@@ -96,5 +100,8 @@ export async function saveApng() {
     state.exportActive = false;
     setExporting(false);
     resumeMediaState();
+    if (wasAudioPlaying && state.audio) {
+      try { state.audio.play(); } catch (e) {}
+    }
   }
 }

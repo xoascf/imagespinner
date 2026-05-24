@@ -155,6 +155,8 @@
     "gifAborted": "GIF export was aborted. Try lower FPS, fewer seconds, or smaller canvas.",
     "gifRendering": "Rendering GIF. This can take a while…",
     "gifRenderFailed": "GIF render failed. Try lower FPS, fewer seconds, or smaller canvas.",
+    "apngFrames": "Exporting APNG frame {done}/{total}…",
+    "apngEncoding": "Encoding APNG. This can take a while…",
     "apngSaved": "APNG saved.",
     "apngFailed": "APNG export failed.",
     "htmlSaved": "HTML wallpaper saved.",

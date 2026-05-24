@@ -151,6 +151,8 @@
     "gifAborted": "GIF-vienti keskeytyi.",
     "gifRendering": "Renderöidään GIF…",
     "gifRenderFailed": "GIF-renderöinti epäonnistui.",
+    "apngFrames": "Viedään APNG-ruutua {done}/{total}…",
+    "apngEncoding": "Koodataan APNG-tiedostoa. Tämä voi kestää…",
     "apngSaved": "APNG tallennettu.",
     "apngFailed": "APNG-vienti epäonnistui.",
     "htmlSaved": "HTML-taustakuva tallennettu.",

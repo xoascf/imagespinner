@@ -1,7 +1,7 @@
 import { state } from './state.js';
 import { $, canvas } from './utils/dom.js';
 import { fileFromUrl } from './utils/files.js';
-import { loadBackground, loadForeground, loadAudioFile } from './media/layers.js';
+import { loadBackground, loadForeground, loadAudioFile, updateFileName } from './media/layers.js';
 import { updatePositionControls, updateNumbers } from './controls/position.js';
 
 export async function loadQueryAssets() {
@@ -25,14 +25,13 @@ export async function loadQueryAssets() {
     ['fg', 'fgFile', loadForeground],
     ['audio', 'audioFile', loadAudioFile]
   ];
-  for (const [param, fileId, loader] of entries) {
+  for (const [param, inputId, loadFn] of entries) {
     const value = params.get(param);
     if (!value) continue;
     try {
       const file = await fileFromUrl(new URL(value, location.href).href);
-      const { updateFileName } = await import('./media/layers.js');
-      updateFileName(fileId, file);
-      loader(file);
+      updateFileName(inputId, file);
+      loadFn(file);
     } catch (e) {
       console.error(e);
     }

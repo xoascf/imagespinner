@@ -1,4 +1,5 @@
 import { state } from './state.js';
+import { updateMeta } from './controls/position.js';
 import { $ } from './utils/dom.js';
 import { status } from './controls/status.js';
 
@@ -156,7 +157,7 @@ export async function loadGif(file, target) {
         state.fgType = 'gif';
         state.fgGifAnimator = animator;
       }
-      import('./controls/position.js').then(m => m.updateMeta());
+      updateMeta();
       status('gifLoaded');
     });
   } catch (e) {
@@ -203,7 +204,7 @@ export async function loadGifFromUrl(url, target, displayName) {
         state.fgType = 'gif';
         state.fgGifAnimator = animator;
       }
-      import('./controls/position.js').then(m => m.updateMeta());
+      updateMeta();
       status('gifLoaded');
     });
   } catch (e) {

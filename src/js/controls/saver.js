@@ -20,6 +20,12 @@ function collectSettings() {
   return settings;
 }
 
+import { updateNumbers, updatePositionControls } from './position.js';
+import { applyLanguage } from '../utils/i18n.js';
+import { resizeCanvas } from './init.js';
+import { status } from './status.js';
+import { scriptOnce } from '../utils/async.js';
+
 function applySettings(settings) {
   Object.entries(settings).forEach(([id, value]) => {
     if (id.startsWith('default')) return;
@@ -28,13 +34,14 @@ function applySettings(settings) {
     if (el.type === 'checkbox') el.checked = !!value;
     else el.value = String(value);
   });
-  import('./position.js').then(m => { m.updateNumbers(); m.updatePositionControls(); });
-  import('../utils/i18n.js').then(m => m.applyLanguage());
-  import('./init.js').then(m => { if (m.resizeCanvas) m.resizeCanvas(true, false); });
+  updateNumbers();
+  updatePositionControls();
+  applyLanguage();
+  resizeCanvas(true, false);
 }
 
 function saveStatus(key) {
-  import('./status.js').then(m => m.status(key));
+  status(key);
 }
 
 export function downloadJsonPreset() {
@@ -61,9 +68,8 @@ async function loadJSZip() {
   if (window.JSZip) return window.JSZip;
   // In dev mode only — bundled builds already have JSZip inlined by build.mjs
   try {
-    const { scriptOnce } = await import('../utils/async.js');
     try {
-      await scriptOnce('https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js');
+      await scriptOnce('https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js', 'JSZip');
     } catch {
       await scriptOnce('https://unpkg.com/jszip@3.10.1/dist/jszip.min.js');
     }

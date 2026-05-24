@@ -2,6 +2,7 @@ import { state } from '../state.js';
 import { $, canvas } from '../utils/dom.js';
 import { status } from './status.js';
 import { centerLayers, updatePositionControls, updateNumbers, updateMeta } from './position.js';
+import { resizeCanvas } from './init.js';
 
 export function applyBalancedSettings(showStatus) {
   $('backColor').value = '#ffffff';
@@ -50,7 +51,7 @@ export function applyAudioDuration(showMissing) {
 export function resetSettings() {
   $('canvasW').value = 800;
   $('canvasH').value = 800;
-  import('./init.js').then(m => { if (m.resizeCanvas) m.resizeCanvas(true, false); });
+  resizeCanvas(true, false);
   if ($('recDuration')) $('recDuration').value = '360';
   $('recSeconds').value = 0;
   applyBalancedSettings(false);

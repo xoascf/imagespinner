@@ -43,6 +43,9 @@ export function populateLanguageSelect() {
   sel.value = language;
 }
 
+import { updatePauseBtnText } from '../controls/status.js';
+import { updateMeta } from '../controls/position.js';
+
 export function applyLanguage() {
   document.documentElement.lang = language;
   document.title = t('appTitle');
@@ -56,6 +59,6 @@ export function applyLanguage() {
   const statusKey = $('status').dataset.statusKey || 'ready';
   const params = $('status').dataset.statusParams ? JSON.parse($('status').dataset.statusParams) : null;
   if ($('statusText')) $('statusText').textContent = formatStatus(statusKey, params);
-  import('../controls/status.js').then(m => m.updatePauseBtnText());
-  import('../controls/position.js').then(m => m.updateMeta());
+  updatePauseBtnText();
+  updateMeta();
 }
