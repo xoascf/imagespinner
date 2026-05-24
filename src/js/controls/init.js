@@ -261,6 +261,7 @@ export function initControls() {
   applyLanguage();
   updateNumbers();
   updatePositionControls();
+  resizeCanvas(true, false);
   
   // Load local session first, if empty, load defaults
   loadSession().then(() => {
@@ -275,10 +276,10 @@ export function initControls() {
 
 }
 
-export function resizeCanvas() {
+export function resizeCanvas(force = false, center = true) {
   const w = Math.max(100, Number($('canvasW').value) || 800);
   const h = Math.max(100, Number($('canvasH').value) || 800);
-  if (canvas.width !== w || canvas.height !== h) {
+  if (force || canvas.width !== w || canvas.height !== h) {
     canvas.width = w;
     canvas.height = h;
     const wrapper = canvas.parentElement;
@@ -286,7 +287,9 @@ export function resizeCanvas() {
       wrapper.style.width = w + 'px';
       wrapper.style.height = h + 'px';
     }
-    centerLayers();
+    if (center !== false) {
+      centerLayers();
+    }
     updateMeta();
   }
 }

@@ -51,10 +51,9 @@ export function applyAudioDuration(showMissing) {
 }
 
 export function resetSettings() {
-  canvas.width = 800;
-  canvas.height = 800;
   $('canvasW').value = 800;
   $('canvasH').value = 800;
+  import('./init.js').then(m => { if (m.resizeCanvas) m.resizeCanvas(true, false); });
   if ($('recDuration')) $('recDuration').value = '360';
   $('recSeconds').value = 0;
   $('recSeconds').hidden = true;

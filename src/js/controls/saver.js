@@ -30,7 +30,7 @@ function applySettings(settings) {
   });
   import('./position.js').then(m => { m.updateNumbers(); m.updatePositionControls(); });
   import('../utils/i18n.js').then(m => m.applyLanguage());
-  import('./init.js').then(m => { if (m.resizeCanvas) m.resizeCanvas(); });
+  import('./init.js').then(m => { if (m.resizeCanvas) m.resizeCanvas(true, false); });
 }
 
 function saveStatus(key) {

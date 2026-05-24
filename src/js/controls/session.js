@@ -63,6 +63,7 @@ export async function loadSession() {
       });
       updateNumbers();
       updatePositionControls();
+      import('./init.js').then(m => { if (m.resizeCanvas) m.resizeCanvas(true, false); });
     }
 
     if (sessionData.rearBgFile) await loadRearBackground(sessionData.rearBgFile);
