@@ -168,8 +168,9 @@ export async function saveWebM() {
       }
 
       if (frameIndex >= totalFrames - 1) {
-        // Last unique frame already drawn above — stop promptly
-        setTimeout(stopRecorder, 0);
+        // Wait one frame duration so the last frame is properly encoded
+        // before stopping — prevents a truncated last frame on loop
+        setTimeout(stopRecorder, Math.ceil(1000 / fps));
         return;
       }
       rafId = requestAnimationFrame(tick);
