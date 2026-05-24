@@ -1,0 +1,8 @@
+{
+  "gifler": "https://cdn.jsdelivr.net/npm/gifler@0.1.0/gifler.min.js",
+  "gif.js": "https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js",
+  "gif.worker.js": "https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.worker.js",
+  "jszip": "https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js",
+  "UPNG.js": "https://cdn.jsdelivr.net/npm/upng-js@2.1.0/UPNG.js",
+  "pako": "https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"
+}

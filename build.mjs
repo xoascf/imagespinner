@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, copyFileSync } from 'fs';
 import { join, dirname, relative, resolve, basename } from 'path';
 import { fileURLToPath } from 'url';
 import { get } from 'https';
@@ -114,61 +114,54 @@ async function build() {
     .replace(/await\s+import\(['"][^'"]+['"]\)/g, 'undefined')
     .replace(/\n\s*\/\/\s*undefined is already available/g, '');
 
-  let giflerCode = '';
+  let deps = {};
   try {
-    giflerCode = await download('https://cdn.jsdelivr.net/npm/gifler@0.1.0/gifler.min.js');
-    console.log(`Downloaded gifler (${(giflerCode.length / 1024).toFixed(0)} KB)`);
+    deps = JSON.parse(readFileSync(join(__dirname, 'src', 'dependencies.json'), 'utf-8'));
   } catch (e) {
-    console.warn('Could not download gifler, will load at runtime:', e.message);
+    console.error('Could not read dependencies.json:', e);
   }
 
-  let gifJsCode = '';
-  try {
-    gifJsCode = await download('https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js');
-    // Patch gif.js to use willReadFrequently on internal canvas contexts
-    // so getImageData readbacks don't trigger Chrome/Edge warnings
+  const downloaded = {};
+  for (const [name, url] of Object.entries(deps)) {
+    try {
+      const code = await download(url);
+      downloaded[name] = code;
+      console.log(`Downloaded ${name} (${(code.length / 1024).toFixed(0)} KB)`);
+    } catch (e) {
+      console.warn(`Could not download ${name}, will load at runtime:`, e.message);
+    }
+  }
+
+  let gifJsCode = downloaded['gif.js'] || '';
+  if (gifJsCode) {
     gifJsCode = gifJsCode.replace(
       /\.getContext\(\s*(['"])2d\1\s*\)/g,
       '.getContext("2d",{willReadFrequently:true})'
     );
-    console.log(`Downloaded gif.js (${(gifJsCode.length / 1024).toFixed(0)} KB)`);
-  } catch (e) {
-    console.warn('Could not download gif.js, will load at runtime:', e.message);
   }
 
-  let gifWorkerCode = '';
-  try {
-    gifWorkerCode = await download('https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.worker.js');
-    // Strip sourceMappingURL — it can't resolve from a blob URL
+  let gifWorkerCode = downloaded['gif.worker.js'] || '';
+  if (gifWorkerCode) {
     gifWorkerCode = gifWorkerCode.replace(/\/\/[#@]\s*sourceMappingURL=.*$/gm, '');
-    console.log(`Downloaded gif.worker.js (${(gifWorkerCode.length / 1024).toFixed(0)} KB)`);
-  } catch (e) {
-    console.warn('Could not download gif.worker.js, will load at runtime:', e.message);
   }
 
-  let jszipCode = '';
-  try {
-    jszipCode = await download('https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js');
-    console.log(`Downloaded jszip (${(jszipCode.length / 1024).toFixed(0)} KB)`);
-  } catch (e) {
-    console.warn('Could not download jszip, will load at runtime:', e.message);
-  }
-
-  // Build the worker code declaration so gif.js can create a blob URL offline
   const workerDecl = gifWorkerCode
     ? `var __gifWorkerCode = ${JSON.stringify(gifWorkerCode)};`
     : '';
 
-  let upngCode = '';
-  try {
-    upngCode = await download('https://cdn.jsdelivr.net/npm/upng-js@2.1.0/UPNG.js');
-    // Also need pako for UPNG's zlib
-    const pakoCode = await download('https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js');
+  let upngCode = downloaded['UPNG.js'] || '';
+  let pakoCode = downloaded['pako'] || '';
+  if (upngCode && pakoCode) {
     upngCode = pakoCode + '\n' + upngCode;
-    console.log(`Downloaded UPNG.js + pako (${((upngCode.length) / 1024).toFixed(0)} KB)`);
-  } catch (e) {
-    console.warn('Could not download UPNG.js, APNG export will be unavailable:', e.message);
   }
+
+  const libCodes = [
+    downloaded['gifler'] || '',
+    gifJsCode,
+    downloaded['jszip'] || '',
+    upngCode,
+    workerDecl
+  ].filter(Boolean);
 
   // Auto-discover and inline locale JSON files
   const localesDir = join(__dirname, 'src', 'locales');
@@ -189,7 +182,8 @@ async function build() {
   const localesDecl = `var __locales = ${JSON.stringify(localesObj)};`;
 
   // Assemble: libraries first, then app code
-  const libs = [giflerCode, gifJsCode, jszipCode, upngCode, workerDecl, localesDecl].filter(Boolean).join('\n');
+  libCodes.push(localesDecl);
+  const libs = libCodes.join('\n');
   let combinedScript = libs ? libs + '\n' + appCode : appCode;
 
   const result = await minify(combinedScript, {
@@ -205,6 +199,15 @@ async function build() {
   const distDir = join(__dirname, 'dist');
   if (!existsSync(distDir)) mkdirSync(distDir, { recursive: true });
   writeFileSync(join(distDir, 'index.html'), outputHtml);
+
+  // Copy PWA assets
+  const srcDir = join(__dirname, 'src');
+  ['manifest.json', 'sw.js', 'favicon.ico'].forEach(file => {
+    const srcPath = join(srcDir, file);
+    if (existsSync(srcPath)) {
+      copyFileSync(srcPath, join(distDir, file));
+    }
+  });
 
   console.log(`Built ${(outputHtml.length / 1024).toFixed(0)} KB → dist/index.html`);
 }

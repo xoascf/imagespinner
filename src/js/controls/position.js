@@ -2,6 +2,7 @@ import { state } from '../state.js';
 import { $, canvas } from '../utils/dom.js';
 import { t } from '../utils/i18n.js';
 import { getExportSeconds } from '../render/engine.js';
+import { INPUT_IDS } from '../registry.js';
 
 export function positionIds(layer) {
   if (layer === 'rear') return { x: 'rearBgX', y: 'rearBgY' };
@@ -17,6 +18,8 @@ export function updatePositionControls() {
     const y = Math.round(Number($(ids.y).value) || canvas.height / 2);
     $(ids.x).value = x;
     $(ids.y).value = y;
+    if ($(ids.x + 'Range')) $(ids.x + 'Range').value = x;
+    if ($(ids.y + 'Range')) $(ids.y + 'Range').value = y;
   });
   updateMeta();
 }
@@ -53,7 +56,11 @@ export function centerLayers() {
 }
 
 export function updateNumbers() {
-  // Number inputs show their own values — no text spans to update
+  INPUT_IDS.forEach(id => {
+    if ($(id) && $(id + 'Range')) {
+      $(id + 'Range').value = $(id).value;
+    }
+  });
   const loop = Math.max(0.05, Number($('loopSeconds').value) || 1);
   const ang = Number($('syncAngle').value) || 0;
   const mult = Math.max(0.05, Number($('loopMultiple').value) || 1);
@@ -77,7 +84,6 @@ export function updateMeta() {
   const moveLayer = $('moveLayer') ? $('moveLayer').value : 'fg';
   const moveIds = positionIds(moveLayer);
   const posText = moveLayer.toUpperCase() + ' ' + (Math.round(Number($(moveIds.x).value) || 0)) + ',' + (Math.round(Number($(moveIds.y).value) || 0));
-  $('canvasStat').textContent = canvasText;
   $('exportStat').textContent = exportText;
   $('canvasChip').textContent = canvasText;
   $('spinChip').textContent = spinLabels[$('spinTarget').value] || t('spinReady');

@@ -31,6 +31,7 @@ export function loadRearBackground(file) {
   state.rearBgType = 'none';
   revokeIfBlobUrl(state.rearBgUrl);
   state.rearBgUrl = null;
+  state.rearBgFile = file;
 
   if (isVideoFileObject(file)) {
     loadVideoFileObject(file, (video, url) => {
@@ -57,6 +58,7 @@ export function loadBackground(file) {
   state.bgType = 'none';
   revokeIfBlobUrl(state.bgUrl);
   state.bgUrl = null;
+  state.bgFile = file;
 
   const isGif = file.type === 'image/gif' || file.name.toLowerCase().endsWith('.gif');
   if (isGif) { loadGif(file, 'bg'); return; }
@@ -86,6 +88,7 @@ export function loadForeground(file) {
   state.fgType = 'none';
   revokeIfBlobUrl(state.fgUrl);
   state.fgUrl = null;
+  state.fgFile = file;
 
   const isGif = file.type === 'image/gif' || file.name.toLowerCase().endsWith('.gif');
   if (isGif) { loadGif(file, 'fg'); return; }
@@ -126,6 +129,7 @@ export function loadAudioFile(file) {
   if (state.audio) state.audio.pause();
   if (state.audioUrl) URL.revokeObjectURL(state.audioUrl);
   state.audioUrl = URL.createObjectURL(file);
+  state.audioFile = file;
   state.audio = new Audio(state.audioUrl);
   state.audio.loop = true;
   state.audio.volume = 0.8;

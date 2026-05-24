@@ -52,7 +52,7 @@ export function applyLanguage() {
   });
   const statusKey = $('status').dataset.statusKey || 'ready';
   const params = $('status').dataset.statusParams ? JSON.parse($('status').dataset.statusParams) : null;
-  $('status').textContent = formatStatus(statusKey, params);
+  if ($('statusText')) $('statusText').textContent = formatStatus(statusKey, params);
   import('../controls/status.js').then(m => m.updatePauseBtnText());
   import('../controls/position.js').then(m => m.updateMeta());
 }

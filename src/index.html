@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Image Spinner</title>
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="manifest" href="manifest.json">
 </head>
 <body>
   <aside class="controls">
@@ -16,11 +17,14 @@
       <label for="languageSelect" data-i18n="language">Language</label>
       <select id="languageSelect"></select>
     </div>
-    <div id="status" class="status" data-status-key="ready">Ready. The viewer is on the right.</div>
+
     <div class="quick-stats">
       <div class="stat">
         <span data-i18n="canvas">Canvas</span>
-        <strong id="canvasStat">800×800</strong>
+        <div id="canvasStat" style="display: flex; align-items: center; gap: 4px;">
+          <input id="canvasW" type="number" value="800" min="100" title="Width" class="mini-input"> &times; 
+          <input id="canvasH" type="number" value="800" min="100" title="Height" class="mini-input">
+        </div>
       </div>
       <div class="stat">
         <span data-i18n="export">Export</span>
@@ -75,9 +79,12 @@
       <summary data-i18n="spinScale">Spin & Scale</summary>
       <div class="inside">
         <label for="speed" data-i18n="spinSpeed">Spin speed</label>
-        <div class="row">
+        <div class="slider-row">
+          <input id="speedRange" type="range" value="30" min="-360" max="360" step="1">
           <input id="speed" type="number" value="30" min="-360" max="360" step="1">
-          <select id="spinTarget">
+        </div>
+        <div class="label" data-i18n="spinTarget">Spin target</div>
+        <select id="spinTarget">
             <option value="fg" data-i18n="foregroundSpinner">Foreground spinner</option>
             <option value="bg" selected data-i18n="background">Background</option>
             <option value="both" data-i18n="bothLayers">Both layers</option>
@@ -87,16 +94,16 @@
         <div class="row">
           <div>
             <label for="bgScale" data-i18n="backgroundScale">BG scale %</label>
-            <input id="bgScale" type="number" value="121" min="5" max="400" step="1">
+            <div class="slider-row"><input id="bgScaleRange" type="range" value="121" min="5" max="400" step="1"><input id="bgScale" type="number" value="121" min="5" max="400" step="1"></div>
           </div>
           <div>
             <label for="fgScale" data-i18n="foregroundScale">FG scale %</label>
-            <input id="fgScale" type="number" value="108" min="5" max="400" step="1">
+            <div class="slider-row"><input id="fgScaleRange" type="range" value="108" min="5" max="400" step="1"><input id="fgScale" type="number" value="108" min="5" max="400" step="1"></div>
           </div>
         </div>
 
         <label for="rearBgScale" data-i18n="rearBackgroundScale">Rear BG scale %</label>
-        <input id="rearBgScale" type="number" value="100" min="5" max="400" step="1">
+        <div class="slider-row"><input id="rearBgScaleRange" type="range" value="100" min="5" max="400" step="1"><input id="rearBgScale" type="number" value="100" min="5" max="400" step="1"></div>
 
         <label for="backColor" data-i18n="backColor">Background color</label>
         <input id="backColor" type="color" value="#ffffff">
@@ -111,18 +118,6 @@
     <details open>
       <summary data-i18n="positionSize">Position & Size</summary>
       <div class="inside">
-        <div class="row">
-          <div>
-            <label for="canvasW" data-i18n="canvasW">Width</label>
-            <input id="canvasW" type="number" value="800" min="100">
-          </div>
-          <div>
-            <label for="canvasH" data-i18n="canvasH">Height</label>
-            <input id="canvasH" type="number" value="800" min="100">
-          </div>
-        </div>
-        <button id="resizeBtn" data-i18n="applyCanvasSize">Apply Size</button>
-
         <label for="moveLayer" data-i18n="moveLayer">Move layer</label>
         <select id="moveLayer">
           <option value="fg" selected data-i18n="foreground">Foreground</option>
@@ -132,16 +127,16 @@
         <p class="hint" data-i18n="dragHint">Drag the canvas to move the selected layer.</p>
 
         <div class="row">
-          <div><label for="rearBgX" data-i18n="rearBgX">Rear BG X</label><input id="rearBgX" type="number" value="400"></div>
-          <div><label for="rearBgY" data-i18n="rearBgY">Rear BG Y</label><input id="rearBgY" type="number" value="400"></div>
+          <div><label for="rearBgX" data-i18n="rearBgX">Rear BG X</label><div class="slider-row"><input id="rearBgXRange" type="range" value="400" min="-4000" max="4000"><input id="rearBgX" type="number" value="400"></div></div>
+          <div><label for="rearBgY" data-i18n="rearBgY">Rear BG Y</label><div class="slider-row"><input id="rearBgYRange" type="range" value="400" min="-4000" max="4000"><input id="rearBgY" type="number" value="400"></div></div>
         </div>
         <div class="row">
-          <div><label for="bgX" data-i18n="bgX">BG X</label><input id="bgX" type="number" value="400"></div>
-          <div><label for="bgY" data-i18n="bgY">BG Y</label><input id="bgY" type="number" value="400"></div>
+          <div><label for="bgX" data-i18n="bgX">BG X</label><div class="slider-row"><input id="bgXRange" type="range" value="400" min="-4000" max="4000"><input id="bgX" type="number" value="400"></div></div>
+          <div><label for="bgY" data-i18n="bgY">BG Y</label><div class="slider-row"><input id="bgYRange" type="range" value="400" min="-4000" max="4000"><input id="bgY" type="number" value="400"></div></div>
         </div>
         <div class="row">
-          <div><label for="fgX" data-i18n="fgX">FG X</label><input id="fgX" type="number" value="400"></div>
-          <div><label for="fgY" data-i18n="fgY">FG Y</label><input id="fgY" type="number" value="400"></div>
+          <div><label for="fgX" data-i18n="fgX">FG X</label><div class="slider-row"><input id="fgXRange" type="range" value="400" min="-4000" max="4000"><input id="fgX" type="number" value="400"></div></div>
+          <div><label for="fgY" data-i18n="fgY">FG Y</label><div class="slider-row"><input id="fgYRange" type="range" value="400" min="-4000" max="4000"><input id="fgY" type="number" value="400"></div></div>
         </div>
         <div class="nudge-grid" aria-label="Move selected layer">
           <button class="secondary blank" type="button" tabindex="-1"></button>
@@ -167,7 +162,7 @@
         <div class="row">
           <div>
             <label for="watermarkSize" data-i18n="watermarkSize">Size (px)</label>
-            <input id="watermarkSize" type="number" value="28" min="8" max="120">
+            <div class="slider-row"><input id="watermarkSizeRange" type="range" value="28" min="8" max="120"><input id="watermarkSize" type="number" value="28" min="8" max="120"></div>
           </div>
           <div>
             <label for="watermarkPosition" data-i18n="watermarkPosition">Position</label>
@@ -191,7 +186,7 @@
         <div class="row">
           <div>
             <label for="audioScaleAmount" data-i18n="soundPulseAmount">Pulse amount %</label>
-            <input id="audioScaleAmount" type="number" value="35" min="0" max="200">
+            <div class="slider-row"><input id="audioScaleAmountRange" type="range" value="35" min="0" max="200"><input id="audioScaleAmount" type="number" value="35" min="0" max="200"></div>
           </div>
           <div>
             <label for="soundTarget" data-i18n="soundEffectTarget">Apply to</label>
@@ -205,11 +200,11 @@
         <div class="row">
           <div>
             <label for="sizeResponse" data-i18n="spinnerSizeResponse">Size response %</label>
-            <input id="sizeResponse" type="number" value="250" min="0" max="3000" step="25">
+            <div class="slider-row"><input id="sizeResponseRange" type="range" value="250" min="0" max="3000" step="25"><input id="sizeResponse" type="number" value="250" min="0" max="3000" step="25"></div>
           </div>
           <div>
             <label for="bassSensitivity" data-i18n="bassPickupSensitivity">Bass sensitivity %</label>
-            <input id="bassSensitivity" type="number" value="250" min="25" max="1000">
+            <div class="slider-row"><input id="bassSensitivityRange" type="range" value="250" min="25" max="1000"><input id="bassSensitivity" type="number" value="250" min="25" max="1000"></div>
           </div>
         </div>
         <p class="hint" data-i18n="sizeResponseHint">Controls how much the detected bass changes spinner size.</p>
@@ -239,15 +234,15 @@
         <div class="row">
           <div>
             <label for="loopSeconds" data-i18n="loopLength">Loop length (sec)</label>
-            <input id="loopSeconds" type="number" value="5" min="0.05" step="0.01">
+            <div class="slider-row"><input id="loopSecondsRange" type="range" value="5" min="0.05" step="0.01"><input id="loopSeconds" type="number" value="5" min="0.05" step="0.01"></div>
           </div>
           <div>
             <label for="syncAngle" data-i18n="spinAngleLoop">Angle per loop</label>
-            <input id="syncAngle" type="number" value="360" step="1">
+            <div class="slider-row"><input id="syncAngleRange" type="range" value="360" step="1"><input id="syncAngle" type="number" value="360" step="1"></div>
           </div>
         </div>
         <label for="loopMultiple" data-i18n="loopMultiple">Loop multiple</label>
-        <input id="loopMultiple" type="number" value="1" min="0.05" step="0.05">
+        <div class="slider-row"><input id="loopMultipleRange" type="range" value="1" min="0.05" step="0.05"><input id="loopMultiple" type="number" value="1" min="0.05" step="0.05"></div>
         <p class="hint"><span data-i18n="computedSpeed">Computed speed</span>: <span id="computedSpeed">72.00</span> <span data-i18n="degreesSec">°/sec</span></p>
       </div>
     </details>
@@ -284,12 +279,13 @@
               <option value="90" data-i18n="quarterSpin">Quarter (90°)</option>
               <option value="180" data-i18n="halfSpin">Half (180°)</option>
               <option value="360" selected data-i18n="fullSpin">Full (360°)</option>
+              <option value="audio" data-i18n="useAudioLength">Use Audio Length</option>
               <option value="custom" data-i18n="customDuration">Custom</option>
             </select>
           </div>
           <div>
             <label for="recFps" data-i18n="fps">FPS</label>
-            <input id="recFps" type="number" value="20" min="1" max="60">
+            <div class="slider-row"><input id="recFpsRange" type="range" value="20" min="1" max="60"><input id="recFps" type="number" value="20" min="1" max="60"></div>
           </div>
         </div>
         <label for="recSeconds" id="recSecondsLabel" data-i18n="seconds" hidden>Seconds</label>
@@ -297,11 +293,11 @@
         <div class="row">
           <div>
             <label for="webmMbps" data-i18n="webmBitrate">WebM Mbps</label>
-            <input id="webmMbps" type="number" value="12" min="1" max="80" step="1">
+            <div class="slider-row"><input id="webmMbpsRange" type="range" value="12" min="1" max="80" step="1"><input id="webmMbps" type="number" value="12" min="1" max="80" step="1"></div>
           </div>
           <div>
             <label for="gifQuality" data-i18n="gifQuality">GIF quality</label>
-            <input id="gifQuality" type="number" value="8" min="1" max="30">
+            <div class="slider-row"><input id="gifQualityRange" type="range" value="8" min="1" max="30"><input id="gifQuality" type="number" value="8" min="1" max="30"></div>
           </div>
         </div>
         <div class="button-row">
@@ -310,8 +306,9 @@
         </div>
         <div class="button-row">
           <button id="apngBtn" class="secondary" data-i18n="saveApng">Save APNG</button>
-          <button id="htmlBtn" class="secondary" data-i18n="saveHtml">HTML Wallpaper</button>
+          <button id="htmlBtn" class="secondary" data-i18n="saveHtml">HTML (Embed)</button>
         </div>
+        <button id="htmlZipBtn" class="secondary" data-i18n="saveHtmlZip" style="margin-top: 6px;">HTML (ZIP with assets)</button>
         <button id="cancelExportBtn" class="danger" data-i18n="cancelExport" hidden>Cancel</button>
         <p class="hint" data-i18n="saveHint">WebM can include sound. GIF and APNG cannot.</p>
       </div>
@@ -332,6 +329,7 @@
           <button id="loadProjectBtn" type="button" data-i18n="loadZippedProject">Load Project</button>
         </div>
         <input id="loadProjectFile" type="file" accept=".zip,application/zip">
+        <button id="clearWorkspaceBtn" class="danger" style="margin-top:12px" data-i18n="clearWorkspace">Clear Workspace</button>
       </div>
     </details>
 
@@ -347,8 +345,15 @@
         <span id="audioChip" class="chip">audio idle</span>
       </div>
     </div>
-    <canvas id="canvas" width="800" height="800"></canvas>
+    <div class="canvas-wrapper">
+      <canvas id="canvas" width="800" height="800"></canvas>
+    </div>
   </main>
+
+  <div id="status" class="toast">
+    <span id="statusText" data-status-key="ready">Ready.</span>
+    <button id="closeStatusBtn" class="close-btn">&times;</button>
+  </div>
 
   <script type="module" src="js/app.js"></script>
 </body>

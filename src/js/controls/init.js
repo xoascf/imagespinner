@@ -9,7 +9,7 @@ import { loadQueryAssets } from '../url-loader.js';
 import { applyBalancedSettings, applyAudioDuration, resetSettings, applyForegroundGifLoop } from './presets.js';
 import { status } from './status.js';
 import { updatePauseBtnText, setExporting } from './status.js';
-import { updatePositionControls, updateNumbers, updateMeta, nudgeLayer, centerSelectedLayer, setLayerPosition, positionIds } from './position.js';
+import { updatePositionControls, updateNumbers, updateMeta, nudgeLayer, centerSelectedLayer, setLayerPosition, positionIds, centerLayers } from './position.js';
 import { pickColorFromCanvasEvent, startColorPick } from './color-picker.js';
 import { saveWebM } from '../export/webm.js';
 import { saveGif } from '../export/gif.js';
@@ -17,6 +17,7 @@ import { saveApng } from '../export/apng.js';
 import { saveHtml } from '../export/html-wallpaper.js';
 import { cancelExport } from './status.js';
 import { downloadJsonPreset, loadJsonPreset, downloadZippedProject, loadZippedProject } from './saver.js';
+import { loadSession, triggerAutosave, clearWorkspace } from './session.js';
 
 function canvasPoint(e) {
   const rect = canvas.getBoundingClientRect();
@@ -39,6 +40,7 @@ function handleFileSelected(inputId, mediaKey, loadFn, file) {
   updateFileName(inputId, file);
   loadFn(file);
   $(inputId).value = '';
+  triggerAutosave();
 }
 
 function setupFileDrop(inputId, mediaKey, loadFn) {
@@ -69,6 +71,7 @@ function setupFileRemove(inputId, mediaKey) {
     e.stopPropagation();
     clearFile(inputId, mediaKey);
     $(inputId).value = '';
+    triggerAutosave();
   });
 }
 
@@ -151,14 +154,28 @@ export function initControls() {
   canvas.addEventListener('pointerup', stopDraggingLayer);
   canvas.addEventListener('pointercancel', stopDraggingLayer);
 
-  $('resizeBtn').addEventListener('click', () => {
+  function resizeCanvas() {
     const w = Math.max(100, Number($('canvasW').value) || 800);
     const h = Math.max(100, Number($('canvasH').value) || 800);
-    canvas.width = w;
-    canvas.height = h;
-    centerLayers();
-    updateMeta();
-  });
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width = w;
+      canvas.height = h;
+      const wrapper = canvas.parentElement;
+      if (wrapper && wrapper.classList.contains('canvas-wrapper')) {
+        wrapper.style.width = w + 'px';
+        wrapper.style.height = h + 'px';
+      }
+      centerLayers();
+      updateMeta();
+    }
+  }
+
+  $('canvasW').addEventListener('input', resizeCanvas);
+  $('canvasW').addEventListener('change', resizeCanvas);
+  $('canvasH').addEventListener('input', resizeCanvas);
+  $('canvasH').addEventListener('change', resizeCanvas);
+
+  // ResizeObserver removed so logical canvas size isn't overridden by wrapper resizing.
 
   ['rearBgX', 'rearBgY', 'bgX', 'bgY', 'fgX', 'fgY'].forEach(id => {
     $(id).addEventListener('input', updatePositionControls);
@@ -194,13 +211,36 @@ export function initControls() {
 
   INPUT_IDS.forEach(id => {
     if (!$(id)) return;
+    
+    const rangeEl = $(id + 'Range');
+    if (rangeEl) {
+      $(id).addEventListener('input', () => {
+        rangeEl.value = $(id).value;
+      });
+      rangeEl.addEventListener('input', () => {
+        $(id).value = rangeEl.value;
+        $(id).dispatchEvent(new Event('input'));
+      });
+    }
+
     $(id).addEventListener('input', () => {
       if (AUDIO_RESET_IDS.includes(id)) {
         state.audioLevelSmoothed = 0;
       }
       updateNumbers();
+      // For position coordinates, update positions
+      if (['rearBgX', 'rearBgY', 'bgX', 'bgY', 'fgX', 'fgY'].includes(id)) {
+        updatePositionControls();
+      }
+      triggerAutosave();
     });
-    $(id).addEventListener('change', updateNumbers);
+    $(id).addEventListener('change', () => {
+      updateNumbers();
+      if (['rearBgX', 'rearBgY', 'bgX', 'bgY', 'fgX', 'fgY'].includes(id)) {
+        updatePositionControls();
+      }
+      triggerAutosave();
+    });
   });
 
   $('languageSelect').addEventListener('change', e => {
@@ -211,7 +251,8 @@ export function initControls() {
   if ($('webmBtn')) $('webmBtn').addEventListener('click', saveWebM);
   if ($('gifBtn')) $('gifBtn').addEventListener('click', saveGif);
   if ($('apngBtn')) $('apngBtn').addEventListener('click', saveApng);
-  if ($('htmlBtn')) $('htmlBtn').addEventListener('click', saveHtml);
+  if ($('htmlBtn')) $('htmlBtn').addEventListener('click', () => saveHtml('embed'));
+  if ($('htmlZipBtn')) $('htmlZipBtn').addEventListener('click', () => saveHtml('zip'));
   if ($('cancelExportBtn')) $('cancelExportBtn').addEventListener('click', cancelExport);
 
   if ($('downloadPresetBtn')) $('downloadPresetBtn').addEventListener('click', downloadJsonPreset);
@@ -230,11 +271,23 @@ export function initControls() {
     if (file) loadZippedProject(file);
     e.target.value = '';
   });
+  if ($('clearWorkspaceBtn')) $('clearWorkspaceBtn').addEventListener('click', clearWorkspace);
   if ($('defaultFolderBtn')) $('defaultFolderBtn').addEventListener('click', loadDefaultAssetsFromFolder);
 
   applyLanguage();
   updateNumbers();
   updatePositionControls();
-  loadDefaultAssets().then(loadQueryAssets);
+  
+  // Load local session first, if empty, load defaults
+  loadSession().then(() => {
+    // We only load query assets, we could skip default assets if a session was found
+    // To keep it simple, load defaults if no state files are loaded
+    if (!state.bgFile && !state.fgFile && !state.rearBgFile) {
+      loadDefaultAssets().then(loadQueryAssets);
+    } else {
+      loadQueryAssets();
+    }
+  });
+
   setInterval(updateMeta, 500);
 }

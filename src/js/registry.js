@@ -24,7 +24,8 @@ export const INPUT_IDS = [
   'syncOn', 'spinTarget', 'soundTarget', 'moveLayer',
   'recDuration', 'recSeconds', 'recFps',
   'transparentBg', 'watermarkOn', 'watermarkText',
-  'watermarkSize', 'watermarkPosition'
+  'watermarkSize', 'watermarkPosition',
+  'canvasW', 'canvasH', 'rearBgX', 'rearBgY', 'bgX', 'bgY', 'fgX', 'fgY'
 ];
 
 // IDs that reset audio state when changed.

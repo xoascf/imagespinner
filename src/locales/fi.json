@@ -108,7 +108,8 @@
     "saveWebm": "Tallenna WebM",
     "saveGif": "Tallenna GIF",
     "saveApng": "Tallenna APNG",
-    "saveHtml": "HTML-taustakuva",
+    "saveHtml": "HTML-taustakuva (Upotettu)",
+    "saveHtmlZip": "HTML-taustakuva (Zip ja resurssit)",
     "cancelExport": "Peruuta",
     "exporting": "Viedään…",
     "exportCancelled": "Vienti peruutettu.",
@@ -175,7 +176,9 @@
     "projectLoaded": "Projekti ladattu.",
     "presetLoadFailed": "Asetuspresetin lataus epäonnistui.",
     "projectLoadFailed": "Projektin lataus epäonnistui.",
-    "saverHint": "Tallenna asetukset JSON-presettinä tai luo zip-projekti mediatiedostoineen."
+    "saverHint": "Tallenna asetukset JSON-presettinä tai luo zip-projekti mediatiedostoineen.",
+    "clearWorkspace": "Tyhjennä työtila",
+    "confirmClear": "Haluatko varmasti tyhjentää nykyisen työtilasi? Tätä ei voi perua."
   },
   "status": {
     "recordingStart": "Tallennetaan WebM {mbps} Mbps {seconds}s…",

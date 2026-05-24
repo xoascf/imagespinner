@@ -108,7 +108,8 @@
     "saveWebm": "Save WebM",
     "saveGif": "Save GIF",
     "saveApng": "Save APNG",
-    "saveHtml": "HTML Wallpaper",
+    "saveHtml": "HTML (Embed)",
+    "saveHtmlZip": "HTML (ZIP with assets)",
     "cancelExport": "Cancel",
     "exporting": "Exporting…",
     "exportCancelled": "Export cancelled.",
@@ -175,7 +176,9 @@
     "projectLoaded": "Project loaded.",
     "presetLoadFailed": "Could not load preset.",
     "projectLoadFailed": "Could not load project.",
-    "saverHint": "Save settings as JSON preset, or create a zipped project with media files."
+    "saverHint": "Save settings as JSON preset, or create a zipped project with media files.",
+    "clearWorkspace": "Clear Workspace",
+    "confirmClear": "Are you sure you want to clear your current workspace? This cannot be undone."
   },
   "status": {
     "recordingStart": "Recording WebM at {mbps} Mbps for {seconds}s…",

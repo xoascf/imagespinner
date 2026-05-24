@@ -20,6 +20,13 @@ export function spinSpeed() {
 
 export function getExportSeconds() {
   const mode = $('recDuration') ? $('recDuration').value : 'custom';
+  if (mode === 'audio') {
+    if (state.audio && Number.isFinite(state.audio.duration)) {
+      return Math.max(0.05, Math.min(600, state.audio.duration));
+    }
+    // Fallback if no audio
+    return 5;
+  }
   if (mode === 'custom') {
     return Math.max(0.05, Math.min(600, Number($('recSeconds').value) || 3));
   }
@@ -32,13 +39,13 @@ export function getExportSeconds() {
 
 export function getExportAngle() {
   const mode = $('recDuration') ? $('recDuration').value : 'custom';
-  if (mode === 'custom') return 0;
+  if (mode === 'custom' || mode === 'audio') return 0;
   return Number(mode) || 360;
 }
 
 export function isAutoExportDuration() {
   const mode = $('recDuration') ? $('recDuration').value : 'custom';
-  return mode !== 'custom';
+  return mode !== 'custom' && mode !== 'audio';
 }
 
 let _emptyGuideShown = false;

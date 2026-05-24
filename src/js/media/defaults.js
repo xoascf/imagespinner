@@ -186,7 +186,9 @@ function setDefaultFolderPrompt(show) {
 export async function loadDefaultAssetsFromFolder() {
   if (!hasDefaultMedia()) return;
   if (!window.showDirectoryPicker) {
-    $('status').textContent = 'This browser cannot pick a folder. Use Chrome/Edge, or serve the HTML from a local web server so default files can auto-load safely.';
+    $('statusText').textContent = 'This browser cannot pick a folder. Use Chrome/Edge, or serve the HTML from a local web server so default files can auto-load safely.';
+    $('status').classList.add('visible');
+    setTimeout(() => $('status').classList.remove('visible'), 5000);
     return;
   }
 
@@ -215,8 +217,10 @@ export async function loadDefaultAssetsFromFolder() {
   }
   if (loadedAny) {
     setDefaultFolderPrompt(false);
-    $('status').textContent = 'Default files loaded from folder. WebM/GIF saving should stay safe because these are real File objects.';
+    $('statusText').textContent = 'Default files loaded from folder. WebM/GIF saving should stay safe because these are real File objects.';
   } else {
-    $('status').textContent = 'No default files were found in that folder. Check the filenames and capitalization.';
+    $('statusText').textContent = 'No default files were found in that folder. Check the filenames and capitalization.';
   }
+  $('status').classList.add('visible');
+  setTimeout(() => $('status').classList.remove('visible'), 5000);
 }
