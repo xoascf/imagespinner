@@ -183,12 +183,6 @@ export function initControls() {
 
   if ($('recDuration')) {
     $('recDuration').addEventListener('change', () => {
-      const isCustom = $('recDuration').value === 'custom';
-      $('recSeconds').hidden = !isCustom;
-      if ($('recSecondsLabel')) $('recSecondsLabel').hidden = !isCustom;
-      if (isCustom && !(Number($('recSeconds').value) > 0)) {
-        $('recSeconds').value = 3;
-      }
       updateNumbers();
     });
   }

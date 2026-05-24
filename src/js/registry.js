@@ -12,7 +12,7 @@ export const SETTING_IDS = [
   'rearBgX', 'rearBgY', 'bgX', 'bgY', 'fgX', 'fgY',
   'syncOn', 'loopSeconds', 'syncAngle', 'loopMultiple',
   'keyOn', 'keyColor', 'tol', 'soft',
-  'recDuration', 'recSeconds', 'recFps',
+  'recDuration', 'recAngle', 'recSeconds', 'recFps',
   'webmMbps', 'gifQuality', 'moveLayer'
 ];
 
@@ -22,7 +22,7 @@ export const INPUT_IDS = [
   'audioScaleAmount', 'sizeResponse', 'bassSensitivity',
   'tol', 'soft', 'loopSeconds', 'syncAngle', 'loopMultiple',
   'syncOn', 'spinTarget', 'soundTarget', 'moveLayer',
-  'recDuration', 'recSeconds', 'recFps',
+  'recDuration', 'recAngle', 'recSeconds', 'recFps',
   'transparentBg', 'watermarkOn', 'watermarkText',
   'watermarkSize', 'watermarkPosition',
   'canvasW', 'canvasH', 'rearBgX', 'rearBgY', 'bgX', 'bgY', 'fgX', 'fgY'

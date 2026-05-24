@@ -61,6 +61,21 @@ export function updateNumbers() {
       $(id + 'Range').value = $(id).value;
     }
   });
+
+  const durationMode = $('recDuration') ? $('recDuration').value : 'custom';
+  const isCustom = durationMode === 'custom';
+  const isAngle = durationMode === 'angle';
+
+  if ($('recAngleContainer')) $('recAngleContainer').hidden = !isAngle;
+  if ($('recSeconds')) {
+    $('recSeconds').readOnly = !isCustom;
+    if (!isCustom) {
+      $('recSeconds').value = getExportSeconds().toFixed(2);
+    } else if (!(Number($('recSeconds').value) > 0)) {
+      $('recSeconds').value = 3;
+    }
+  }
+
   const loop = Math.max(0.05, Number($('loopSeconds').value) || 1);
   const ang = Number($('syncAngle').value) || 0;
   const mult = Math.max(0.05, Number($('loopMultiple').value) || 1);

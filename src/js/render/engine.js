@@ -30,8 +30,8 @@ export function getExportSeconds() {
   if (mode === 'custom') {
     return Math.max(0.05, Math.min(600, Number($('recSeconds').value) || 3));
   }
-  // Spin preset: 90, 180, or 360 degrees
-  const angle = Number(mode) || 360;
+  // Spin preset: 90, 180, or 360 degrees, or custom angle
+  const angle = mode === 'angle' ? (Number($('recAngle').value) || 360) : (Number(mode) || 360);
   const speed = Math.abs(spinSpeed());
   if (speed < 0.01) return 3; // near-zero speed fallback
   return Math.max(0.1, Math.min(600, angle / speed));
@@ -40,6 +40,7 @@ export function getExportSeconds() {
 export function getExportAngle() {
   const mode = $('recDuration') ? $('recDuration').value : 'custom';
   if (mode === 'custom' || mode === 'audio') return 0;
+  if (mode === 'angle') return Number($('recAngle').value) || 360;
   return Number(mode) || 360;
 }
 

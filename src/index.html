@@ -91,8 +91,7 @@
             <option value="fg" data-i18n="foregroundSpinner">Foreground spinner</option>
             <option value="bg" selected data-i18n="background">Background</option>
             <option value="both" data-i18n="bothLayers">Both layers</option>
-          </select>
-        </div>
+        </select>
 
         <div class="row">
           <div>
@@ -280,10 +279,12 @@
             <label for="recDuration" data-i18n="duration">Duration</label>
             <select id="recDuration">
               <option value="90" data-i18n="quarterSpin">Quarter (90°)</option>
+              <option value="120" data-i18n="thirdSpin">Third (120°)</option>
               <option value="180" data-i18n="halfSpin">Half (180°)</option>
               <option value="360" selected data-i18n="fullSpin">Full (360°)</option>
+              <option value="angle" data-i18n="customAngle">Custom Angle</option>
               <option value="audio" data-i18n="useAudioLength">Use Audio Length</option>
-              <option value="custom" data-i18n="customDuration">Custom</option>
+              <option value="custom" data-i18n="customDuration">Custom Time</option>
             </select>
           </div>
           <div>
@@ -291,8 +292,16 @@
             <div class="slider-row"><input id="recFpsRange" type="range" value="20" min="1" max="60"><input id="recFps" type="number" value="20" min="1" max="60"></div>
           </div>
         </div>
-        <label for="recSeconds" id="recSecondsLabel" data-i18n="seconds" hidden>Seconds</label>
-        <input id="recSeconds" type="number" value="0" min="0.05" max="600" step="0.01" hidden>
+        <div class="row">
+          <div id="recAngleContainer">
+            <label for="recAngle" data-i18n="angleDeg">Angle (°)</label>
+            <input id="recAngle" type="number" value="360" min="1" max="7200" step="1">
+          </div>
+          <div>
+            <label for="recSeconds" id="recSecondsLabel" data-i18n="seconds">Seconds</label>
+            <input id="recSeconds" type="number" value="0" min="0.05" max="600" step="0.01">
+          </div>
+        </div>
         <div class="row">
           <div>
             <label for="webmMbps" data-i18n="webmBitrate">WebM Mbps</label>
