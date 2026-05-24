@@ -23,6 +23,7 @@ export async function saveGif() {
   setExporting(true);
   const savedAngle = state.angle;
   state.exportActive = true;
+  state.exportCancelled = false;
   state.angle = 0;
   state.audioLevelSmoothed = 0;
   state.audioBassFloor = 0;
@@ -154,6 +155,16 @@ export async function saveGif() {
       snapCtx.drawImage(canvas, 0, 0);
       gif.addFrame(snapCanvas, { copy: true, delay: frameDelay });
       status('gifFrames', { done: i + 1, total: frames });
+
+      if (state.exportCancelled) {
+        gif.abort();
+        URL.revokeObjectURL(workerUrl);
+        state.angle = savedAngle;
+        state.exportActive = false;
+        setExporting(false);
+        status('exportCancelled');
+        return;
+      }
     }
   } catch (e) {
     console.error(e);

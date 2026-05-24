@@ -2,6 +2,7 @@ import { state } from '../state.js';
 import { $, canvas } from '../utils/dom.js';
 import { currentMediaFiles } from '../consts.js';
 import { t, setLanguage, applyLanguage } from '../utils/i18n.js';
+import { INPUT_IDS, AUDIO_RESET_IDS } from '../registry.js';
 import { updateFileName, loadRearBackground, loadBackground, loadForeground, loadAudioFile, clearFile } from '../media/layers.js';
 import { loadDefaultAssets, loadDefaultAssetsFromFolder } from '../media/defaults.js';
 import { loadQueryAssets } from '../url-loader.js';
@@ -12,6 +13,9 @@ import { updatePositionControls, updateNumbers, updateMeta, nudgeLayer, centerSe
 import { pickColorFromCanvasEvent, startColorPick } from './color-picker.js';
 import { saveWebM } from '../export/webm.js';
 import { saveGif } from '../export/gif.js';
+import { saveApng } from '../export/apng.js';
+import { saveHtml } from '../export/html-wallpaper.js';
+import { cancelExport } from './status.js';
 import { downloadJsonPreset, loadJsonPreset, downloadZippedProject, loadZippedProject } from './saver.js';
 
 function canvasPoint(e) {
@@ -156,22 +160,9 @@ export function initControls() {
     updateMeta();
   });
 
-  [
-    ['rearBgX', 'rearBgXRange'],
-    ['rearBgY', 'rearBgYRange'],
-    ['bgX', 'bgXRange'],
-    ['bgY', 'bgYRange'],
-    ['fgX', 'fgXRange'],
-    ['fgY', 'fgYRange']
-  ].forEach(([numberId, rangeId]) => {
-    $(numberId).addEventListener('input', () => {
-      $(rangeId).value = $(numberId).value;
-      updatePositionControls();
-    });
-    $(rangeId).addEventListener('input', () => {
-      $(numberId).value = $(rangeId).value;
-      updatePositionControls();
-    });
+  ['rearBgX', 'rearBgY', 'bgX', 'bgY', 'fgX', 'fgY'].forEach(id => {
+    $(id).addEventListener('input', updatePositionControls);
+    $(id).addEventListener('change', updatePositionControls);
   });
 
   document.querySelectorAll('[data-nudge]').forEach(btn => {
@@ -201,10 +192,10 @@ export function initControls() {
     });
   }
 
-  ['speed','bgScale','fgScale','rearBgScale','audioScaleAmount','sizeResponse','bassSensitivity','tol','soft','loopSeconds','syncAngle','loopMultiple','syncOn','spinTarget','soundTarget','moveLayer','recDuration','recSeconds','recFps','transparentBg','watermarkOn','watermarkText','watermarkSize','watermarkPosition'].forEach(id => {
+  INPUT_IDS.forEach(id => {
     if (!$(id)) return;
     $(id).addEventListener('input', () => {
-      if (id === 'bassSensitivity' || id === 'sizeResponse' || id === 'soundTarget') {
+      if (AUDIO_RESET_IDS.includes(id)) {
         state.audioLevelSmoothed = 0;
       }
       updateNumbers();
@@ -217,8 +208,11 @@ export function initControls() {
     applyLanguage();
   });
 
-  $('webmBtn').addEventListener('click', saveWebM);
-  $('gifBtn').addEventListener('click', saveGif);
+  if ($('webmBtn')) $('webmBtn').addEventListener('click', saveWebM);
+  if ($('gifBtn')) $('gifBtn').addEventListener('click', saveGif);
+  if ($('apngBtn')) $('apngBtn').addEventListener('click', saveApng);
+  if ($('htmlBtn')) $('htmlBtn').addEventListener('click', saveHtml);
+  if ($('cancelExportBtn')) $('cancelExportBtn').addEventListener('click', cancelExport);
 
   if ($('downloadPresetBtn')) $('downloadPresetBtn').addEventListener('click', downloadJsonPreset);
   if ($('downloadProjectBtn')) $('downloadProjectBtn').addEventListener('click', downloadZippedProject);

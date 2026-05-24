@@ -1,16 +1,11 @@
 import { $ } from '../utils/dom.js';
 import { downloadBlob } from '../utils/files.js';
 import { currentMediaFiles } from '../consts.js';
+import { SETTING_IDS } from '../registry.js';
 import { updateFileName, loadRearBackground, loadBackground, loadForeground, loadAudioFile } from '../media/layers.js';
 
 function collectSettings() {
-  const ids = [
-    'languageSelect','backColor','transparentBg','watermarkOn','watermarkText','watermarkSize','watermarkPosition',
-    'speed','bgScale','fgScale','rearBgScale','spinTarget','audioScaleOn','audioScaleAmount','soundTarget',
-    'sizeResponse','bassSensitivity','canvasW','canvasH','rearBgX','rearBgY','bgX','bgY','fgX','fgY',
-    'syncOn','loopSeconds','syncAngle','loopMultiple','keyOn','keyColor','tol','soft','recDuration','recSeconds','recFps',
-    'webmMbps','gifQuality'
-  ];
+  const ids = SETTING_IDS;
   const settings = {};
   ids.forEach(id => {
     const el = $(id);

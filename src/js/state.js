@@ -27,6 +27,7 @@ export const state = {
   bgGifAnimator: null,
   fgGifAnimator: null,
   exportActive: false,
+  exportCancelled: false,
   angle: 0,
   paused: false,
   lastTime: performance.now(),

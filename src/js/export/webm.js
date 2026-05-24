@@ -89,6 +89,7 @@ export async function saveWebM() {
 
   try {
     state.exportActive = true;
+    state.exportCancelled = false;
     state.angle = 0;
     state.audioLevelSmoothed = 0;
     state.audioBassFloor = 0;
@@ -165,6 +166,11 @@ export async function saveWebM() {
         lastFrameIndex = frameIndex;
         drawExportFrame(frameIndex);
         status('recordingFrames', { done: Math.min(frameIndex + 1, totalFrames), total: totalFrames });
+      }
+
+      if (state.exportCancelled) {
+        setTimeout(stopRecorder, 0);
+        return;
       }
 
       if (frameIndex >= totalFrames - 1) {

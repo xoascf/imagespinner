@@ -1,5 +1,5 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'fs';
-import { join, dirname, relative, resolve } from 'path';
+import { join, dirname, relative, resolve, basename } from 'path';
 import { fileURLToPath } from 'url';
 import { get } from 'https';
 import { minify } from 'terser';
@@ -159,8 +159,37 @@ async function build() {
     ? `var __gifWorkerCode = ${JSON.stringify(gifWorkerCode)};`
     : '';
 
+  let upngCode = '';
+  try {
+    upngCode = await download('https://cdn.jsdelivr.net/npm/upng-js@2.1.0/UPNG.js');
+    // Also need pako for UPNG's zlib
+    const pakoCode = await download('https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js');
+    upngCode = pakoCode + '\n' + upngCode;
+    console.log(`Downloaded UPNG.js + pako (${((upngCode.length) / 1024).toFixed(0)} KB)`);
+  } catch (e) {
+    console.warn('Could not download UPNG.js, APNG export will be unavailable:', e.message);
+  }
+
+  // Auto-discover and inline locale JSON files
+  const localesDir = join(__dirname, 'src', 'locales');
+  const localesObj = {};
+  if (existsSync(localesDir)) {
+    const localeFiles = readdirSync(localesDir).filter(f => f.endsWith('.json'));
+    for (const file of localeFiles) {
+      const code = basename(file, '.json');
+      try {
+        const data = JSON.parse(readFileSync(join(localesDir, file), 'utf-8'));
+        localesObj[code] = data;
+        console.log(`Locale: ${code} (${data.meta?.nativeName || data.meta?.name || code})`);
+      } catch (e) {
+        console.warn(`Could not parse locale ${file}:`, e.message);
+      }
+    }
+  }
+  const localesDecl = `var __locales = ${JSON.stringify(localesObj)};`;
+
   // Assemble: libraries first, then app code
-  const libs = [giflerCode, gifJsCode, jszipCode, workerDecl].filter(Boolean).join('\n');
+  const libs = [giflerCode, gifJsCode, jszipCode, upngCode, workerDecl, localesDecl].filter(Boolean).join('\n');
   let combinedScript = libs ? libs + '\n' + appCode : appCode;
 
   const result = await minify(combinedScript, {

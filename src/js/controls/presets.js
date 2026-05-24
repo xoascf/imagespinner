@@ -40,7 +40,10 @@ export function applyAudioDuration(showMissing) {
     return false;
   }
   const seconds = Math.min(600, Math.max(0.05, state.audio.duration));
+  if ($('recDuration')) $('recDuration').value = 'custom';
   $('recSeconds').value = seconds.toFixed(2);
+  $('recSeconds').hidden = false;
+  if ($('recSecondsLabel')) $('recSecondsLabel').hidden = false;
   $('loopSeconds').value = state.audio.duration.toFixed(2);
   updateNumbers();
   status('audioDurationApplied');
@@ -52,7 +55,10 @@ export function resetSettings() {
   canvas.height = 800;
   $('canvasW').value = 800;
   $('canvasH').value = 800;
+  if ($('recDuration')) $('recDuration').value = '360';
   $('recSeconds').value = 0;
+  $('recSeconds').hidden = true;
+  if ($('recSecondsLabel')) $('recSecondsLabel').hidden = true;
   applyBalancedSettings(false);
   status('settingsReset');
 }
@@ -67,7 +73,10 @@ export function applyForegroundGifLoop() {
   const seconds = Math.max(0.05, Math.min(600, actualDuration));
   const rounded = seconds.toFixed(3).replace(/0+$/, '').replace(/\.$/, '');
   $('loopSeconds').value = rounded;
+  if ($('recDuration')) $('recDuration').value = 'custom';
   $('recSeconds').value = rounded;
+  $('recSeconds').hidden = false;
+  if ($('recSecondsLabel')) $('recSecondsLabel').hidden = false;
   if (state.fgGifFrames && state.fgGifFrames > 0) {
     $('recFps').value = Math.max(1, Math.min(60, Math.round(state.fgGifFrames / seconds)));
   }

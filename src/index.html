@@ -14,16 +14,13 @@
     </div>
     <div class="language-row">
       <label for="languageSelect" data-i18n="language">Language</label>
-      <select id="languageSelect">
-        <option value="en">English</option>
-        <option value="fi">Suomi</option>
-      </select>
+      <select id="languageSelect"></select>
     </div>
     <div id="status" class="status" data-status-key="ready">Ready. The viewer is on the right.</div>
     <div class="quick-stats">
       <div class="stat">
         <span data-i18n="canvas">Canvas</span>
-        <strong id="canvasStat">800x800</strong>
+        <strong id="canvasStat">800×800</strong>
       </div>
       <div class="stat">
         <span data-i18n="export">Export</span>
@@ -32,6 +29,7 @@
     </div>
     <button id="pauseBtn" data-i18n="pause">Pause</button>
 
+    <!-- ═══ Files ═══ -->
     <details open>
       <summary data-i18n="files">Files</summary>
       <div class="inside">
@@ -68,98 +66,62 @@
         </label>
         <button id="audioBtn" class="secondary" data-i18n="playPauseSound">Play / Pause Sound</button>
         <button id="defaultFolderBtn" class="secondary" type="button" hidden>Load default files from folder</button>
-        <p id="defaultFolderHint" class="hint" hidden>Local files could not be auto-loaded. Click the button and choose the folder containing the default files.</p>
+        <p id="defaultFolderHint" class="hint" hidden>Local files could not be auto-loaded.</p>
       </div>
     </details>
 
+    <!-- ═══ Spin & Scale ═══ -->
     <details open>
-      <summary data-i18n="mainControls">Main controls</summary>
+      <summary data-i18n="spinScale">Spin & Scale</summary>
       <div class="inside">
-        <label for="backColor" data-i18n="backColor">Color behind pictures</label>
-        <input id="backColor" type="color" value="#ffffff">
-        <label><input id="transparentBg" type="checkbox"> <span data-i18n="transparentBackground">Transparent background</span></label>
-        <button id="pickBackColorBtn" class="secondary" type="button" data-i18n="pickBackColor">Pick background color from viewer</button>
-
-        <label><input id="watermarkOn" type="checkbox" checked> <span data-i18n="watermarkOn">Show watermark</span></label>
-        <label for="watermarkText" data-i18n="watermarkTextLabel">Watermark text</label>
-        <input id="watermarkText" type="text" value="Trassel Vardias">
-        <label for="watermarkSize"><span data-i18n="watermarkSize">Watermark size</span>: <span id="watermarkSizeText">28</span> px</label>
-        <input id="watermarkSize" type="range" min="8" max="120" value="28">
-        <label for="watermarkPosition" data-i18n="watermarkPosition">Watermark position</label>
-        <select id="watermarkPosition">
-          <option value="bottom-right" selected data-i18n="bottomRight">Bottom right</option>
-          <option value="bottom-left" data-i18n="bottomLeft">Bottom left</option>
-          <option value="top-right" data-i18n="topRight">Top right</option>
-          <option value="top-left" data-i18n="topLeft">Top left</option>
-          <option value="center" data-i18n="center">Center</option>
-        </select>
-
-        <label for="speed"><span data-i18n="spinSpeed">Spin speed</span>: <span id="speedText">30</span> <span data-i18n="degreesSec">degrees/sec</span></label>
-        <input id="speed" type="range" min="-360" max="360" value="30">
-
-        <label for="bgScale"><span data-i18n="backgroundScale">Background scale</span>: <span id="bgScaleText">100</span>%</label>
-        <input id="bgScale" type="range" min="5" max="400" value="100">
-
-        <label for="fgScale"><span data-i18n="foregroundScale">Foreground scale</span>: <span id="fgScaleText">100</span>%</label>
-        <input id="fgScale" type="range" min="5" max="400" value="100">
-
-        <label for="rearBgScale"><span data-i18n="rearBackgroundScale">Rear background scale</span>: <span id="rearBgScaleText">100</span>%</label>
-        <input id="rearBgScale" type="range" min="5" max="400" value="100">
-
-        <label for="spinTarget" data-i18n="spinLayer">Spin layer</label>
-        <select id="spinTarget">
-          <option value="fg" data-i18n="foregroundSpinner">Foreground spinner</option>
-          <option value="bg" selected data-i18n="background">Background</option>
-          <option value="both" data-i18n="bothLayers">Both layers</option>
-        </select>
-
-        <label><input id="audioScaleOn" type="checkbox"> <span data-i18n="pulseFromSound">Pulse spinner size from sound</span></label>
-        <label for="audioScaleAmount"><span data-i18n="soundPulseAmount">Sound pulse amount</span>: <span id="audioScaleText">35</span>%</label>
-        <input id="audioScaleAmount" type="range" min="0" max="200" value="35">
-
-        <label for="soundTarget" data-i18n="soundEffectTarget">Apply sound effect to</label>
-        <select id="soundTarget">
-          <option value="bg" selected data-i18n="soundTargetSpinner">Spinner / background</option>
-          <option value="fg" data-i18n="soundTargetForeground">Foreground</option>
-          <option value="both" data-i18n="bothLayers">Both layers</option>
-        </select>
-
-        <label for="sizeResponse"><span data-i18n="spinnerSizeResponse">Spinner size response</span>: <span id="sizeResponseText">250</span>%</label>
-        <input id="sizeResponse" type="range" min="0" max="3000" step="25" value="250">
-        <p class="hint" data-i18n="sizeResponseHint">Controls how much the detected bass changes spinner size. Raise this when the bass level is low or noisy.</p>
-
-        <label for="bassSensitivity"><span data-i18n="bassPickupSensitivity">Bass pickup sensitivity</span>: <span id="bassSensitivityText">250</span>%</label>
-        <input id="bassSensitivity" type="range" min="25" max="1000" value="250">
-        <p class="hint"><span data-i18n="bassLevel">Bass level</span>: <span id="bassLevelText">0</span>%</p>
-      </div>
-    </details>
-
-    <details open>
-      <summary data-i18n="presets">Presets</summary>
-      <div class="inside">
-        <div class="button-row">
-          <button id="balancedPresetBtn" class="secondary" data-i18n="balancedPreset">Balanced spin</button>
-          <button id="audioLengthBtn" class="secondary" data-i18n="useAudioLength">Use audio length</button>
+        <label for="speed" data-i18n="spinSpeed">Spin speed</label>
+        <div class="row">
+          <input id="speed" type="number" value="30" min="-360" max="360" step="1">
+          <select id="spinTarget">
+            <option value="fg" data-i18n="foregroundSpinner">Foreground spinner</option>
+            <option value="bg" selected data-i18n="background">Background</option>
+            <option value="both" data-i18n="bothLayers">Both layers</option>
+          </select>
         </div>
-        <button id="resetSettingsBtn" class="secondary" data-i18n="resetSettings">Reset settings</button>
-        <p class="hint" data-i18n="presetHint">Balanced spin keeps the background rotating behind the foreground.</p>
+
+        <div class="row">
+          <div>
+            <label for="bgScale" data-i18n="backgroundScale">BG scale %</label>
+            <input id="bgScale" type="number" value="121" min="5" max="400" step="1">
+          </div>
+          <div>
+            <label for="fgScale" data-i18n="foregroundScale">FG scale %</label>
+            <input id="fgScale" type="number" value="108" min="5" max="400" step="1">
+          </div>
+        </div>
+
+        <label for="rearBgScale" data-i18n="rearBackgroundScale">Rear BG scale %</label>
+        <input id="rearBgScale" type="number" value="100" min="5" max="400" step="1">
+
+        <label for="backColor" data-i18n="backColor">Background color</label>
+        <input id="backColor" type="color" value="#ffffff">
+        <div class="row" style="margin-top:4px">
+          <label><input id="transparentBg" type="checkbox"> <span data-i18n="transparentBackground">Transparent</span></label>
+          <button id="pickBackColorBtn" class="secondary" type="button" data-i18n="pickBackColor">Pick from viewer</button>
+        </div>
       </div>
     </details>
 
+    <!-- ═══ Position & Size ═══ -->
     <details open>
-      <summary data-i18n="positionSize">Position and size</summary>
+      <summary data-i18n="positionSize">Position & Size</summary>
       <div class="inside">
         <div class="row">
           <div>
-            <label for="canvasW" data-i18n="canvasW">Canvas W</label>
+            <label for="canvasW" data-i18n="canvasW">Width</label>
             <input id="canvasW" type="number" value="800" min="100">
           </div>
           <div>
-            <label for="canvasH" data-i18n="canvasH">Canvas H</label>
+            <label for="canvasH" data-i18n="canvasH">Height</label>
             <input id="canvasH" type="number" value="800" min="100">
           </div>
         </div>
-        <button id="resizeBtn" data-i18n="applyCanvasSize">Apply Canvas Size</button>
+        <button id="resizeBtn" data-i18n="applyCanvasSize">Apply Size</button>
 
         <label for="moveLayer" data-i18n="moveLayer">Move layer</label>
         <select id="moveLayer">
@@ -168,21 +130,6 @@
           <option value="rear" data-i18n="rearBackground">Rear background</option>
         </select>
         <p class="hint" data-i18n="dragHint">Drag the canvas to move the selected layer.</p>
-
-        <label for="rearBgXRange"><span data-i18n="rearBackgroundX">Rear background X</span>: <span id="rearBgXText">400</span></label>
-        <input id="rearBgXRange" type="range" min="0" max="800" value="400">
-        <label for="rearBgYRange"><span data-i18n="rearBackgroundY">Rear background Y</span>: <span id="rearBgYText">400</span></label>
-        <input id="rearBgYRange" type="range" min="0" max="800" value="400">
-
-        <label for="bgXRange"><span data-i18n="backgroundX">Background X</span>: <span id="bgXText">400</span></label>
-        <input id="bgXRange" type="range" min="0" max="800" value="400">
-        <label for="bgYRange"><span data-i18n="backgroundY">Background Y</span>: <span id="bgYText">400</span></label>
-        <input id="bgYRange" type="range" min="0" max="800" value="400">
-
-        <label for="fgXRange"><span data-i18n="foregroundX">Foreground X</span>: <span id="fgXText">400</span></label>
-        <input id="fgXRange" type="range" min="0" max="800" value="400">
-        <label for="fgYRange"><span data-i18n="foregroundY">Foreground Y</span>: <span id="fgYText">400</span></label>
-        <input id="fgYRange" type="range" min="0" max="800" value="400">
 
         <div class="row">
           <div><label for="rearBgX" data-i18n="rearBgX">Rear BG X</label><input id="rearBgX" type="number" value="400"></div>
@@ -198,83 +145,191 @@
         </div>
         <div class="nudge-grid" aria-label="Move selected layer">
           <button class="secondary blank" type="button" tabindex="-1"></button>
-          <button class="secondary" type="button" data-nudge="0,-1" title="Move up">↑</button>
+          <button class="secondary" type="button" data-nudge="0,-1" title="↑">↑</button>
           <button class="secondary blank" type="button" tabindex="-1"></button>
-          <button class="secondary" type="button" data-nudge="-1,0" title="Move left">←</button>
-          <button class="secondary" type="button" id="centerSelectedBtn" title="Center selected layer">•</button>
-          <button class="secondary" type="button" data-nudge="1,0" title="Move right">→</button>
+          <button class="secondary" type="button" data-nudge="-1,0" title="←">←</button>
+          <button class="secondary" type="button" id="centerSelectedBtn" title="•">•</button>
+          <button class="secondary" type="button" data-nudge="1,0" title="→">→</button>
           <button class="secondary blank" type="button" tabindex="-1"></button>
-          <button class="secondary" type="button" data-nudge="0,1" title="Move down">↓</button>
+          <button class="secondary" type="button" data-nudge="0,1" title="↓">↓</button>
           <button class="secondary blank" type="button" tabindex="-1"></button>
         </div>
       </div>
     </details>
 
-    <details open>
-      <summary data-i18n="loopSync">Loop sync</summary>
+    <!-- ═══ Watermark ═══ -->
+    <details>
+      <summary data-i18n="watermark">Watermark</summary>
       <div class="inside">
-        <button id="matchFgGifBtn" class="secondary" type="button" data-i18n="matchForegroundGifLoop">Match foreground GIF loop (use GIF duration)</button>
-        <label><input id="syncOn" type="checkbox"> <span data-i18n="syncSpin">Sync spin to loop length</span></label>
-        <label for="loopSeconds" data-i18n="loopLength">Loop length, seconds</label>
-        <input id="loopSeconds" type="number" value="5" min="0.05" step="0.01">
-        <label for="syncAngle" data-i18n="spinAngleLoop">Spin angle per loop</label>
-        <input id="syncAngle" type="number" value="360" step="1">
-        <label for="loopMultiple" data-i18n="loopMultiple">Loop multiple</label>
-        <input id="loopMultiple" type="number" value="1" min="0.05" step="0.05">
-        <p class="hint"><span data-i18n="computedSpeed">Computed speed</span>: <span id="computedSpeed">72.00</span> <span data-i18n="degreesSec">degrees/sec</span></p>
+        <label><input id="watermarkOn" type="checkbox" checked> <span data-i18n="watermarkOn">Show watermark</span></label>
+        <label for="watermarkText" data-i18n="watermarkTextLabel">Text</label>
+        <input id="watermarkText" type="text" value="Trassel Vardias">
+        <div class="row">
+          <div>
+            <label for="watermarkSize" data-i18n="watermarkSize">Size (px)</label>
+            <input id="watermarkSize" type="number" value="28" min="8" max="120">
+          </div>
+          <div>
+            <label for="watermarkPosition" data-i18n="watermarkPosition">Position</label>
+            <select id="watermarkPosition">
+              <option value="bottom-right" selected data-i18n="bottomRight">Bottom right</option>
+              <option value="bottom-left" data-i18n="bottomLeft">Bottom left</option>
+              <option value="top-right" data-i18n="topRight">Top right</option>
+              <option value="top-left" data-i18n="topLeft">Top left</option>
+              <option value="center" data-i18n="center">Center</option>
+            </select>
+          </div>
+        </div>
       </div>
     </details>
 
+    <!-- ═══ Audio Reactive ═══ -->
+    <details>
+      <summary data-i18n="audioReactive">Audio reactive</summary>
+      <div class="inside">
+        <label><input id="audioScaleOn" type="checkbox"> <span data-i18n="pulseFromSound">Pulse size from sound</span></label>
+        <div class="row">
+          <div>
+            <label for="audioScaleAmount" data-i18n="soundPulseAmount">Pulse amount %</label>
+            <input id="audioScaleAmount" type="number" value="35" min="0" max="200">
+          </div>
+          <div>
+            <label for="soundTarget" data-i18n="soundEffectTarget">Apply to</label>
+            <select id="soundTarget">
+              <option value="bg" selected data-i18n="soundTargetSpinner">Spinner / BG</option>
+              <option value="fg" data-i18n="soundTargetForeground">Foreground</option>
+              <option value="both" data-i18n="bothLayers">Both</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="sizeResponse" data-i18n="spinnerSizeResponse">Size response %</label>
+            <input id="sizeResponse" type="number" value="250" min="0" max="3000" step="25">
+          </div>
+          <div>
+            <label for="bassSensitivity" data-i18n="bassPickupSensitivity">Bass sensitivity %</label>
+            <input id="bassSensitivity" type="number" value="250" min="25" max="1000">
+          </div>
+        </div>
+        <p class="hint" data-i18n="sizeResponseHint">Controls how much the detected bass changes spinner size.</p>
+        <p class="hint"><span data-i18n="bassLevel">Bass level</span>: <span id="bassLevelText">0</span>%</p>
+      </div>
+    </details>
+
+    <!-- ═══ Presets ═══ -->
+    <details>
+      <summary data-i18n="presets">Presets</summary>
+      <div class="inside">
+        <div class="button-row">
+          <button id="balancedPresetBtn" class="secondary" data-i18n="balancedPreset">Balanced spin</button>
+          <button id="audioLengthBtn" class="secondary" data-i18n="useAudioLength">Use audio length</button>
+        </div>
+        <button id="resetSettingsBtn" class="secondary" data-i18n="resetSettings">Reset settings</button>
+        <p class="hint" data-i18n="presetHint">Balanced spin keeps the background rotating behind the foreground.</p>
+      </div>
+    </details>
+
+    <!-- ═══ Loop Sync ═══ -->
+    <details>
+      <summary data-i18n="loopSync">Loop sync</summary>
+      <div class="inside">
+        <button id="matchFgGifBtn" class="secondary" type="button" data-i18n="matchForegroundGifLoop">Match foreground GIF loop</button>
+        <label><input id="syncOn" type="checkbox"> <span data-i18n="syncSpin">Sync spin to loop length</span></label>
+        <div class="row">
+          <div>
+            <label for="loopSeconds" data-i18n="loopLength">Loop length (sec)</label>
+            <input id="loopSeconds" type="number" value="5" min="0.05" step="0.01">
+          </div>
+          <div>
+            <label for="syncAngle" data-i18n="spinAngleLoop">Angle per loop</label>
+            <input id="syncAngle" type="number" value="360" step="1">
+          </div>
+        </div>
+        <label for="loopMultiple" data-i18n="loopMultiple">Loop multiple</label>
+        <input id="loopMultiple" type="number" value="1" min="0.05" step="0.05">
+        <p class="hint"><span data-i18n="computedSpeed">Computed speed</span>: <span id="computedSpeed">72.00</span> <span data-i18n="degreesSec">°/sec</span></p>
+      </div>
+    </details>
+
+    <!-- ═══ Chroma Key ═══ -->
     <details>
       <summary data-i18n="chromaKey">Chroma key</summary>
       <div class="inside">
         <label><input id="keyOn" type="checkbox"> <span data-i18n="enableChroma">Enable chroma key</span></label>
         <label for="keyColor" data-i18n="colorRemove">Color to remove</label>
         <input id="keyColor" type="color" value="#00ff00">
-        <button id="pickKeyColorBtn" class="secondary" type="button" data-i18n="pickKeyColor">Pick chroma color from viewer</button>
-        <label for="tol"><span data-i18n="tolerance">Tolerance</span>: <span id="tolText">70</span></label>
-        <input id="tol" type="range" min="0" max="255" value="70">
-        <label for="soft"><span data-i18n="softEdge">Soft edge</span>: <span id="softText">30</span></label>
-        <input id="soft" type="range" min="0" max="255" value="30">
+        <button id="pickKeyColorBtn" class="secondary" type="button" data-i18n="pickKeyColor">Pick from viewer</button>
+        <div class="row">
+          <div>
+            <label for="tol" data-i18n="tolerance">Tolerance</label>
+            <input id="tol" type="number" value="70" min="0" max="255">
+          </div>
+          <div>
+            <label for="soft" data-i18n="softEdge">Soft edge</label>
+            <input id="soft" type="number" value="30" min="0" max="255">
+          </div>
+        </div>
       </div>
     </details>
 
+    <!-- ═══ Export ═══ -->
     <details>
-      <summary data-i18n="save">Save</summary>
+      <summary data-i18n="save">Export</summary>
       <div class="inside">
-        <label for="recDuration" data-i18n="duration">Duration</label>
-        <select id="recDuration">
-          <option value="90" data-i18n="quarterSpin">Quarter spin (90°)</option>
-          <option value="180" data-i18n="halfSpin">Half spin (180°)</option>
-          <option value="360" selected data-i18n="fullSpin">Full spin (360°)</option>
-          <option value="custom" data-i18n="customDuration">Custom seconds</option>
-        </select>
+        <div class="row">
+          <div>
+            <label for="recDuration" data-i18n="duration">Duration</label>
+            <select id="recDuration">
+              <option value="90" data-i18n="quarterSpin">Quarter (90°)</option>
+              <option value="180" data-i18n="halfSpin">Half (180°)</option>
+              <option value="360" selected data-i18n="fullSpin">Full (360°)</option>
+              <option value="custom" data-i18n="customDuration">Custom</option>
+            </select>
+          </div>
+          <div>
+            <label for="recFps" data-i18n="fps">FPS</label>
+            <input id="recFps" type="number" value="20" min="1" max="60">
+          </div>
+        </div>
         <label for="recSeconds" id="recSecondsLabel" data-i18n="seconds" hidden>Seconds</label>
         <input id="recSeconds" type="number" value="0" min="0.05" max="600" step="0.01" hidden>
-        <label for="recFps" data-i18n="fps">FPS</label>
-        <input id="recFps" type="number" value="20" min="1" max="60">
-        <label for="webmMbps" data-i18n="webmBitrate">WebM quality / bitrate, Mbps</label>
-        <input id="webmMbps" type="number" value="12" min="1" max="80" step="1">
-        <label for="gifQuality" data-i18n="gifQuality">GIF quality, 1 best / 30 smallest</label>
-        <input id="gifQuality" type="number" value="8" min="1" max="30">
-        <button id="webmBtn" data-i18n="saveWebm">Save WebM Video</button>
-        <button id="gifBtn" class="secondary" data-i18n="saveGif">Save GIF</button>
-        <p class="hint" data-i18n="saveHint">WebM can include sound in supported browsers. GIF cannot include sound.</p>
+        <div class="row">
+          <div>
+            <label for="webmMbps" data-i18n="webmBitrate">WebM Mbps</label>
+            <input id="webmMbps" type="number" value="12" min="1" max="80" step="1">
+          </div>
+          <div>
+            <label for="gifQuality" data-i18n="gifQuality">GIF quality</label>
+            <input id="gifQuality" type="number" value="8" min="1" max="30">
+          </div>
+        </div>
+        <div class="button-row">
+          <button id="webmBtn" data-i18n="saveWebm">Save WebM</button>
+          <button id="gifBtn" class="secondary" data-i18n="saveGif">Save GIF</button>
+        </div>
+        <div class="button-row">
+          <button id="apngBtn" class="secondary" data-i18n="saveApng">Save APNG</button>
+          <button id="htmlBtn" class="secondary" data-i18n="saveHtml">HTML Wallpaper</button>
+        </div>
+        <button id="cancelExportBtn" class="danger" data-i18n="cancelExport" hidden>Cancel</button>
+        <p class="hint" data-i18n="saveHint">WebM can include sound. GIF and APNG cannot.</p>
       </div>
     </details>
 
+    <!-- ═══ Project / Settings ═══ -->
     <details id="settingsSaverPanel">
       <summary data-i18n="projectSettings">Project / Settings</summary>
       <div class="inside">
-        <p class="hint" data-i18n="saverHint">Save current settings as a JSON preset, or create a zipped project that bundles the media files together with the settings.</p>
+        <p class="hint" data-i18n="saverHint">Save settings as JSON preset, or create a zipped project with media files.</p>
         <div class="button-row">
-          <button id="downloadPresetBtn" type="button" data-i18n="saveJsonPreset">Save JSON Preset</button>
-          <button id="loadPresetBtn" type="button" data-i18n="loadJsonPreset">Load JSON Preset</button>
+          <button id="downloadPresetBtn" type="button" data-i18n="saveJsonPreset">Save Preset</button>
+          <button id="loadPresetBtn" type="button" data-i18n="loadJsonPreset">Load Preset</button>
         </div>
         <input id="loadPresetFile" type="file" accept=".json,application/json">
-        <div class="button-row" style="margin-top:6px">
-          <button id="downloadProjectBtn" type="button" data-i18n="saveZippedProject">Save Zipped Project</button>
-          <button id="loadProjectBtn" type="button" data-i18n="loadZippedProject">Load Zipped Project</button>
+        <div class="button-row" style="margin-top:4px">
+          <button id="downloadProjectBtn" type="button" data-i18n="saveZippedProject">Save Project</button>
+          <button id="loadProjectBtn" type="button" data-i18n="loadZippedProject">Load Project</button>
         </div>
         <input id="loadProjectFile" type="file" accept=".zip,application/zip">
       </div>
@@ -286,7 +341,7 @@
     <div class="workspace-bar">
       <div class="workspace-title" data-i18n="previewOutput">Preview output</div>
       <div class="workspace-meta">
-        <span id="canvasChip" class="chip good">800x800</span>
+        <span id="canvasChip" class="chip good">800×800</span>
         <span id="spinChip" class="chip">FG spinner</span>
         <span id="positionChip" class="chip">FG 400,400</span>
         <span id="audioChip" class="chip">audio idle</span>

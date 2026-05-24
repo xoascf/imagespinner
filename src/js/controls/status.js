@@ -12,9 +12,21 @@ export function updatePauseBtnText() {
   $('pauseBtn').textContent = state.paused ? t('play') : t('pause');
 }
 
+export function cancelExport() {
+  state.exportCancelled = true;
+}
+
 export function setExporting(isExporting) {
-  $('webmBtn').disabled = isExporting;
-  $('gifBtn').disabled = isExporting;
-  $('webmBtn').textContent = isExporting ? t('exporting') : t('saveWebm');
-  $('gifBtn').textContent = isExporting ? t('exporting') : t('saveGif');
+  const btns = ['webmBtn', 'gifBtn', 'apngBtn', 'htmlBtn'];
+  btns.forEach(id => {
+    if ($(id)) $(id).disabled = isExporting;
+  });
+  if ($('webmBtn')) $('webmBtn').textContent = isExporting ? t('exporting') : t('saveWebm');
+  if ($('gifBtn')) $('gifBtn').textContent = isExporting ? t('exporting') : t('saveGif');
+  if ($('apngBtn')) $('apngBtn').textContent = isExporting ? t('exporting') : t('saveApng');
+  if ($('htmlBtn')) $('htmlBtn').textContent = isExporting ? t('exporting') : t('saveHtml');
+  if ($('cancelExportBtn')) {
+    $('cancelExportBtn').hidden = !isExporting;
+    $('cancelExportBtn').disabled = false;
+  }
 }
