@@ -202,10 +202,17 @@ async function build() {
 
   // Copy PWA assets
   const srcDir = join(__dirname, 'src');
+  const buildTime = Date.now();
   ['manifest.json', 'sw.js', 'favicon.ico', 'favicon.png', 'favicon.svg'].forEach(file => {
     const srcPath = join(srcDir, file);
     if (existsSync(srcPath)) {
-      copyFileSync(srcPath, join(distDir, file));
+      if (file === 'sw.js') {
+        let swCode = readFileSync(srcPath, 'utf-8');
+        swCode = swCode.replace(/const CACHE_NAME = ['"]([^'"]+)['"];/, `const CACHE_NAME = 'image-spinner-v${buildTime}';`);
+        writeFileSync(join(distDir, file), swCode);
+      } else {
+        copyFileSync(srcPath, join(distDir, file));
+      }
     }
   });
 
